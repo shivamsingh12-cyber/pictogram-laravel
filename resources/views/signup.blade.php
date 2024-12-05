@@ -1,4 +1,4 @@
-@yield('header')
+@includeIf("pages.header")
 <div class="login">
     <div class="col-4 bg-white border rounded p-4 shadow-sm">
         <form>
@@ -65,5 +65,5 @@
 </div>
 
 
-<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
-@yield('footer')
+@stack("scripts")
+@includeIf("pages.footer")
