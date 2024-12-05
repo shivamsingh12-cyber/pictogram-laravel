@@ -1,3 +1,4 @@
+@extends('header')
 <!DOCTYPE html>
 <html lang="en">
 
