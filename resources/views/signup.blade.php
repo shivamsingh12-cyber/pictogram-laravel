@@ -63,7 +63,4 @@
         </form>
     </div>
 </div>
-
-
-@stack("scripts")
 @includeIf("pages.footer")
