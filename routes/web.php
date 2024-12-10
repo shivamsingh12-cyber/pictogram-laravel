@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/signup', function () {
-    return view('signup',['page_title'=>'Signup']);
-});
+// Route::any('/signup', function () {
+//     return view('signup',['page_title'=>'Signup']);
+// });
+
+Route::any('/signup',[Controller::class,'signup']);
