@@ -20,9 +20,9 @@ class Controller extends BaseController
                 'first_name'=>'required',
                 'last_name'=>'required',
                 'gender'=>'required',
-                'email'=>'required|min:10',
-                'username'=>'required',
-                'password'=>'required'
+                'email'=>'required|email',
+                'username'=>'required|min:5',
+                'password'=>'required|alpha_num'
                ]);
 
                $user = new User;
