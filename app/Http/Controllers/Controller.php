@@ -20,23 +20,31 @@ class Controller extends BaseController
                 'first_name'=>'required',
                 'last_name'=>'required',
                 'gender'=>'required',
-                'email'=>'required|email',
-                'username'=>'required|min:5',
-                'password'=>'required|alpha_num'
+                'email'=>'required|email|unique:users,email',
+                'username'=>'required',
+                'userpass'=>'required|alpha_num|min:8'
                ]);
+            
 
                $user = new User;
-               $user->first_name=$req['first_name'];
+               //escaping 
+               
+               $user->first_name= $req['first_name'];
                $user->last_name=$req['last_name'];
                $user->gender=$req['gender'];
                $user->email=$req['email'];
                $user->username=$req['username'];
-               $user->password=$req['password'];
+               $user->password=$req['userpass'];
                $user->save();
                return redirect('/login');
 
         }
         return view('signup',['page_title'=>'Signup']);
+    }
+
+    // checking email registered
+    public function checkregisteredemail(Request $req){
+            
     }
 
    

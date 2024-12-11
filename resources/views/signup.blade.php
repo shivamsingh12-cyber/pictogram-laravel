@@ -15,16 +15,16 @@
             <h1 class="h5 mb-3 fw-normal">Create new account</h1>
             <div class="d-flex">
                 <div class="form-floating mt-1 col-6 ">
-                    <input type="text" class="form-control rounded-0" placeholder="First Name" name="first_name">
+                    <input type="text" class="form-control rounded-0 @error('first_name') is-invalid  @enderror" placeholder="First Name" name="first_name" value="{{ old('first_name') }}">
                     <label for="floatingInput">first name</label>
-                    <span> <small>@error('first_name')
+                    <span class="text-danger"> <small>@error('first_name')
                         {{$message}}
                     @enderror </small></span>
                 </div>
                 <div class="form-floating mt-1 col-6">
-                    <input type="text" class="form-control rounded-0" placeholder="Last Name" name="last_name">
+                    <input type="text" class="form-control rounded-0 @error('last_name') is-invalid  @enderror" placeholder="Last Name" name="last_name" value="{{ old('last_name') }}">
                     <label for="floatingInput">last name</label>
-                    <span> <small>@error('last_name')
+                    <span class="text-danger"> <small>@error('last_name')
                         {{$message}}
                     @enderror </small></span>
                 </div>
@@ -53,23 +53,23 @@
                 </div>
             </div>
             <div class="form-floating mt-1">
-                <input type="email" class="form-control rounded-0" placeholder="username/email" name="email">
+                <input type="email" class="form-control rounded-0 @error('email') is-invalid  @enderror" placeholder="username/email" name="email" value="{{ old('email') }}">
                 <label for="floatingInput">email</label>
-                <span> <small>@error('email')
+                <span class="text-danger"> <small>@error('email')
                     {{$message}}
                 @enderror </small></span>
             </div>
             <div class="form-floating mt-1">
-                <input type="text" class="form-control rounded-0" placeholder="username/email" name="username">
+                <input type="text" class="form-control rounded-0 @error('username') is-invalid  @enderror" placeholder="username/email" name="username" value="{{ old('username') }}">
                 <label for="floatingInput">username</label>
-                <span> <small>@error('username')
+                <span class="text-danger"> <small>@error('username')
                     {{$message}}
                 @enderror </small></span>
             </div>
             <div class="form-floating mt-1">
-                <input type="password" class="form-control rounded-0" id="floatingPassword" placeholder="Password" name="password">
+                <input type="password" class="form-control rounded-0 @error('userpass') is-invalid  @enderror" id="floatingPassword" placeholder="Password" name="userpass" value="{{ old('userpass') }}">
                 <label for="floatingPassword">password</label>
-                <span> <small>@error('password')
+                <span class="text-danger"> <small>@error('userpass')
                     {{$message}}
                 @enderror </small></span>
             </div>
