@@ -19,3 +19,4 @@ use App\Http\Controllers\Controller;
 // });
 
 Route::any('/signup',[Controller::class,'signup']);
+Route::any('/login',[Controller::class,'login']);

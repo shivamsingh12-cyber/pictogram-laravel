@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Hash;
 // use Request;
 
 class Controller extends BaseController
@@ -34,17 +35,35 @@ class Controller extends BaseController
                $user->gender=$req['gender'];
                $user->email=$req['email'];
                $user->username=$req['username'];
-               $user->password=$req['userpass'];
+               $user->password= Hash::make($req['userpass']);
                $user->save();
-               return redirect('/login');
+               return redirect('/login')->withSuccess('Your account has created');
 
         }
         return view('signup',['page_title'=>'Signup']);
     }
 
     // checking email registered
-    public function checkregisteredemail(Request $req){
-            
+    public function login(Request $req){
+        $submit=$req['submit'];
+        if($submit=="submit")
+        {
+            $input = $req->all();
+        //    print_r($req->all());
+
+           $req->validate([
+            'email'=>'required',
+            'password'=>'required'
+           ]);
+           $fieldType = filter_var($req->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+         
+        //    if(\Auth::attempt($req->only(['email','password'])))
+           if(\Auth::attempt(  array($fieldType => $input['email'], 'password' => $input['password'])))
+            return redirect('/home');
+        else
+                return redirect('/login')->withError('Incorrect Username or Password');
+        }
+        return view('login',['page_title'=>'Login Page']);
     }
 
    
