@@ -37,12 +37,7 @@ class Controller extends BaseController
                $user->username=$req['username'];
                $user->password= Hash::make($req['userpass']);
                $user->save();
-<<<<<<< HEAD
                return redirect('/login')->withSuccess('Your account has created');
-=======
-               $success='your account has been created';
-               return redirect('/login')->with($success);
->>>>>>> 188252b71dc6903aedd5d7c071aaff32081b31d7
 
         }
         return view('signup',['page_title'=>'Signup']);
@@ -50,7 +45,6 @@ class Controller extends BaseController
 
     // checking email registered
     public function login(Request $req){
-<<<<<<< HEAD
         $submit=$req['submit'];
         if($submit=="submit")
         {
@@ -70,23 +64,6 @@ class Controller extends BaseController
                 return redirect('/login')->withError('Incorrect Username or Password');
         }
         return view('login',['page_title'=>'Login Page']);
-=======
-        $submit= $req['submit'];
-        if ($submit=="submit") {
-            $req->validate(
-                [
-                    'username_email'=>'required',
-                    'password'=>'required|min:8'
-                ]);
-            if (\Auth::attempt($req->only('email','username','password'))) {
-              return '<script>alert("You are logged in")</script>';
-            } else {
-               return redirect('/login')->withError('Incorrect Username or password');
-            }
-            
-        }
-        return view('login',['page_title'=>'login']);
->>>>>>> 188252b71dc6903aedd5d7c071aaff32081b31d7
     }
 
    
