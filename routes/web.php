@@ -18,5 +18,12 @@ use App\Http\Controllers\Controller;
 //     return view('signup',['page_title'=>'Signup']);
 // });
 
-Route::any('/signup',[Controller::class,'signup']);
-Route::any('/login',[Controller::class,'login']);
+
+Route::group(['middleware'=>'guest'],function(){
+    Route::any('/signup',[Controller::class,'signup'])->name('register');
+    Route::any('/login',[Controller::class,'login'])->name('login');
+});
+Route::group(['middleware'=>'auth'],function(){
+    Route::any('/home', [Controller::class,'dashboard']);
+    Route::any('/logout', [Controller::class,'logout']);
+});

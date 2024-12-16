@@ -17,7 +17,7 @@
             <div class="alert alert-success">{{session()->get('success')}}</div>
             @endif
             <div class="form-floating">
-                <input type="text" class="form-control rounded-0" name="email" placeholder="username/email">
+                <input type="text" class="form-control rounded-0 @error('email') is-invalid  @enderror" name="email" placeholder="username/email" value="{{ old('email') }}">
                 <label for="floatingInput">username/email</label>
                 <span class="text-danger"> <small>@error('email')
                     {{$message}}
@@ -25,7 +25,7 @@
                 </div>
 
             <div class="form-floating mt-1">
-                <input type="password" class="form-control rounded-0" name="password" id="floatingPassword" placeholder="Password">
+                <input type="password" class="form-control rounded-0 @error('password') is-invalid  @enderror" name="password" value="{{ old('password') }}" id="floatingPassword" placeholder="Password">
                 <label for="floatingPassword">password</label>
                 <span class="text-danger"> <small>@error('password')
                     {{$message}}

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 // use Request;
 
 class Controller extends BaseController
@@ -56,14 +57,30 @@ class Controller extends BaseController
             'password'=>'required'
            ]);
            $fieldType = filter_var($req->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-         
-        //    if(\Auth::attempt($req->only(['email','password'])))
+           if (Auth::user()) {
+       
+            return view('mainpage.home');
+    
+        }
+      
            if(\Auth::attempt(  array($fieldType => $input['email'], 'password' => $input['password'])))
-            return redirect('/home');
-        else
-                return redirect('/login')->withError('Incorrect Username or Password');
+           {
+               return redirect('/home');
+           }
+            else
+            return redirect('/login')->withError('Incorrect Username or Password');
         }
         return view('login',['page_title'=>'Login Page']);
+        }
+
+    public function dashboard(){
+        return view('mainpage.home',['page_title'=>'Home Page']);
+    }
+
+    public function logout(){
+       \Session::flush();
+       Auth::logout();
+       return redirect('/login');
     }
 
    
