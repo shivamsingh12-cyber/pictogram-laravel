@@ -1,7 +1,8 @@
-@include('pages.header')
+{{-- @include('pages.header') --}}
     <div class="login">
         <div class="col-4 bg-white border rounded p-4 shadow-sm">
-            <form>
+            <form method="POST" action="">
+                @csrf
                 <div class="d-flex justify-content-center">
 
 
@@ -16,8 +17,8 @@
                     <label for="floatingPassword">######</label>
                 </div>
                 <div class="mt-3 d-flex justify-content-between align-items-center">
-                    <button class="btn btn-primary" type="submit">Resend Code</button>
-                    <button class="btn btn-primary" type="submit">Verify Email</button>
+                    {{-- <button class="btn btn-primary" type="submit">Resend Code</button> --}}
+                    <a class="btn btn-primary" href="/sendmail">Verify Email</a>
 
 
 
@@ -25,11 +26,11 @@
 
                 </div>
                 <br>
-                <a href="?login" class="text-decoration-none mt-5"><i class="bi bi-arrow-left-circle-fill"></i>
+                <a href="logout" class="text-decoration-none mt-5"><i class="bi bi-arrow-left-circle-fill"></i>
                     Logout</a>
             </form>
         </div>
     </div>
 
 
-    @include('pages.footer')
+    {{-- @include('pages.footer') --}}

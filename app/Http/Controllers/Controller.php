@@ -57,20 +57,16 @@ class Controller extends BaseController
                 'password' => 'required'
             ]);
             $fieldType = filter_var($req->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-         
+       
             if (\Auth::attempt(array($fieldType => $req['email'], 'password' => $req['password']))) {
-                $_SESSION['user']=Auth::user();
-                // return view('mainpage.home',['page_title' => 'Home']);
-                // if ($_SESSION['user']['ac_status']== 0 && Auth::check()) {
-                //     return redirect('/verify');
-                //  }
-                //  elseif ($_SESSION['user']['ac_status']== 1 && Auth::check()) {
-                //     return redirect('/home');
-                //  }
-                //  elseif ($_SESSION['user']['ac_status']== 2 && Auth::check()) {
-                //     return redirect('/block');
-                //  }
-               
+                // $_SESSION['user']=Auth::user();
+                if(Auth::user()->ac_status==0)
+                    return redirect('/verify');
+                elseif(Auth::user()->ac_status==1)
+                    return redirect('/home');
+                else
+                    return redirect('/block');
+               // return view('mainpage.home', ['page_title' => 'Home']);
             }
             else
                 return redirect('/login')->withError('Incorrect Username or Password');
@@ -80,9 +76,20 @@ class Controller extends BaseController
 
     public function dashboard()
     {
-       
+    //    if (Auth::check() && Auth::user()->ac_status==1) {
+    //     // return view('mainpage.home', ['page_title' => 'Home']);
         return view('mainpage.home', ['page_title' => 'Home']);
+    //    }
+    //    elseif (Auth::check() && Auth::user()->ac_status==2) {
+    //     // return view('blocked', ['page_title' => 'Blocked']);
+    //     return redirect('/block');
+    //    }
+    //     else{
+    //         // return view('verified', ['page_title' => 'Verify here']);
+    //         return redirect('/verify');
+    //     }
     }
+    
    
     public function block()
     {
@@ -90,7 +97,7 @@ class Controller extends BaseController
     }
     public function verify()
     {
-        return view('verified', ['page_title' => 'Verify']);
+        return view('verified', ['page_title' => 'Verify here']);
     }
 
     public function logout()

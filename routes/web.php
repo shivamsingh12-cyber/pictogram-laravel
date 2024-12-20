@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Controller;
 use App\Http\Middleware\UserStatus;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +24,13 @@ use App\Http\Middleware\UserStatus;
 Route::group(['middleware'=>'guest'],function(){
     Route::any('/signup',[Controller::class,'signup'])->name('register');
     Route::any('/login',[Controller::class,'login'])->name('login');
-    Route::any('/verify',[Controller::class,'verify'])->name('verify');
-    Route::any('/block',[Controller::class,'block'])->name('block');
     Route::any('/',[Controller::class,'login'])->name('login');
 });
+
 Route::group(['middleware'=>'auth'],function(){
+    Route::any('/block',[Controller::class,'block'])->name('block');
+    Route::any('/sendmail',[EmailController::class,'sendEmail']);
+    Route::any('/verify',[Controller::class,'verify'])->name('verify');
     Route::any('/home', [Controller::class,'dashboard'])->middleware(UserStatus::class);
     Route::any('/logout', [Controller::class,'logout']);
 });

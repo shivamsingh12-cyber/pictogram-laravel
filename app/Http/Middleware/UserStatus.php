@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Response;
 
 class UserStatus
 {
@@ -16,19 +17,18 @@ class UserStatus
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
-    {
-        if (Auth::check() &&  Auth::user()->ac_status==0) {
-            echo "Not Verified";
+        {
+            // return $next($request);
+       if (Auth::user()->ac_status==0) {
+            return redirect('/verify');
+       }
+       elseif (Auth::user()->ac_status==1) {
+            // return redirect('/verify');
             return $next($request);
-        }
-       elseif(Auth::check() &&  Auth::user()->ac_status==1) {
-        
-            return $next($request);
-        }
-        elseif(Auth::check() &&  Auth::user()->ac_status==2) {
-        
-            return $next($request);
-        }
+       }
+       else{
+        return redirect('/block');
+       }
         
         
 
