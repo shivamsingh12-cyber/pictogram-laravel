@@ -29,7 +29,7 @@ Route::group(['middleware'=>'guest'],function(){
 
 Route::group(['middleware'=>'auth'],function(){
     Route::any('/block',[Controller::class,'block'])->name('block');
-    Route::any('/sendmail',[EmailController::class,'sendEmail']);
+    // Route::get('/sendmail',[EmailController::class,'sendEmail'])->name('/sendmail');
     Route::any('/verify',[Controller::class,'verify'])->name('verify');
     Route::any('/home', [Controller::class,'dashboard'])->middleware(UserStatus::class);
     Route::any('/logout', [Controller::class,'logout']);

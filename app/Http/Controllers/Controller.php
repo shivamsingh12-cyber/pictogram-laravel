@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Hash;
+use App\Mail\sendmail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 // use Request;
 
 class Controller extends BaseController
@@ -60,13 +62,13 @@ class Controller extends BaseController
        
             if (\Auth::attempt(array($fieldType => $req['email'], 'password' => $req['password']))) {
                 // $_SESSION['user']=Auth::user();
-                if(Auth::user()->ac_status==0)
+                
+                    $to=Auth::user()->email;
+                    $message="Pictogram Verification OTP is:: ";
+                    $subject="Pictogram Verification";
+                Mail::to($to)->send(new  sendmail($message,$subject));
                     return redirect('/verify');
-                elseif(Auth::user()->ac_status==1)
-                    return redirect('/home');
-                else
-                    return redirect('/block');
-               // return view('mainpage.home', ['page_title' => 'Home']);
+              
             }
             else
                 return redirect('/login')->withError('Incorrect Username or Password');
@@ -107,5 +109,6 @@ class Controller extends BaseController
         return redirect('/login');
     }
 
+   
 
 }

@@ -1,4 +1,4 @@
-{{-- @include('pages.header') --}}
+@include('pages.header')
     <div class="login">
         <div class="col-4 bg-white border rounded p-4 shadow-sm">
             <form method="POST" action="">
@@ -9,7 +9,7 @@
                 </div>
                 <h1 class="h5 mb-3 fw-normal">Verify Your Email Id</h1>
 
-
+               <b>{{Auth::user()->email}}</b>
                 <p>Enter 6 Digit Code Sended to You</p>
                 <div class="form-floating mt-1">
 
@@ -18,7 +18,7 @@
                 </div>
                 <div class="mt-3 d-flex justify-content-between align-items-center">
                     {{-- <button class="btn btn-primary" type="submit">Resend Code</button> --}}
-                    <a class="btn btn-primary" href="/sendmail">Verify Email</a>
+                    <a class="btn btn-primary" href="">Verify Email</a>
 
 
 
@@ -33,4 +33,4 @@
     </div>
 
 
-    {{-- @include('pages.footer') --}}
+    @include('pages.footer')

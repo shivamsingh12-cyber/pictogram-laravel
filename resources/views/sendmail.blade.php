@@ -7,8 +7,9 @@
     <title>Document</title>
 </head>
 <body>
-    p
+    <p>{{$mailmessage}} <b>5679</b> </p>
 </body>
 </html>
+
 
 

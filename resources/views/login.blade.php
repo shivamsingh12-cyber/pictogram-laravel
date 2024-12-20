@@ -33,7 +33,7 @@
             </div>
 
             <div class="mt-3 d-flex justify-content-between align-items-center">
-                <button class="btn btn-primary" type="submit" name="submit" value="submit">Log in</button>
+                <button class="btn btn-primary" type="submit" name="submit" value="submit" >Log in</button>
                 <a href="{{url('/signup')}}" class="text-decoration-none">Create New Account</a>
 
 

@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Mail;
 class EmailController extends Controller
 {
     public function sendEmail(){
-        $toEmail = "singhshivamrock2@gmail.com";
-        $message = "Hello, Welcome my friend";
+        $to = "singhshivamrock2@gmail.com";
+        $message = "Your otp is:: ";
         $subject = "Verification Code";
 
-       $request= Mail::to($toEmail)->send(new sendmail($message,$subject));
-       dd($request);
+      Mail::to($to)->send(new  sendmail($message,$subject)); 
+        // dd($req);      
     }
 }
