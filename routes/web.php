@@ -24,6 +24,8 @@ use App\Http\Controllers\EmailController;
 Route::group(['middleware'=>'guest'],function(){
     Route::any('/signup',[Controller::class,'signup'])->name('register');
     Route::any('/login',[Controller::class,'login'])->name('login');
+    Route::any('/checkemail',[Controller::class,'checkemail'])->name('checkemail');
+    Route::any('/resetpass',[Controller::class,'resetpass']);
     Route::any('/',[Controller::class,'login'])->name('login');
 });
 

@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Session;
 // use Request;
 
 class Controller extends BaseController
@@ -62,12 +63,23 @@ class Controller extends BaseController
        
             if (\Auth::attempt(array($fieldType => $req['email'], 'password' => $req['password']))) {
                 // $_SESSION['user']=Auth::user();
-                
+                if (Auth::check() && Auth::user()->ac_status==0) {
                     $to=Auth::user()->email;
+                    $userid=Auth::user()->id;
+                    Session::put('userid',$userid);
+                    $otp=rand(100000,999999);
+                    Session::put('user_otp',$otp);
                     $message="Pictogram Verification OTP is:: ";
                     $subject="Pictogram Verification";
-                Mail::to($to)->send(new  sendmail($message,$subject));
-                    return redirect('/verify');
+                Mail::to($to)->send(new  sendmail($otp,$message,$subject));
+                return redirect('/verify')->withSent('An OTP has been sent to Your Gmail Account');
+                }
+                
+                else{
+                    return redirect('/home');
+                }
+             
+                    
               
             }
             else
@@ -97,14 +109,83 @@ class Controller extends BaseController
     {
         return view('blocked', ['page_title' => 'Blocked']);
     }
-    public function verify()
+    public function verify(Request $request)
     {
+        $submit=$request['submit'];
+        if (isset($submit)) {
+            $request->validate([
+                'verify'=>'required'
+            ]);
+            $userid=Session::get('userid');
+            $userotp=Session::get('user_otp');
+            $data=User::find($userid);
+            if ($request['verify']==$userotp) {
+               $data->ac_status=1;
+               $data->save();
+               return redirect('/home');
+            }
+            else {
+                return redirect('verify')->withError('Incorrect OTP! Please Verify again!');
+            }
+        }
+       
+       
         return view('verified', ['page_title' => 'Verify here']);
+    }
+
+    public function checkemail(Request $req)  {
+        $submit = $req['submit'];
+        if (isset($submit)) {
+            $req->validate([
+                'email'=>'required'
+            ]);
+            $useremail=User::where('email',$req['email'])->value('email');
+            Session::put('useremail',$useremail);
+            // Session::put('temp_email',$useremail);
+            // return $useremail;
+            if ( $useremail==$req['email']) {
+                $to=$useremail;
+                $otp=rand(100000,999999);
+                Session::put('temp_otp',$otp);
+                $message="Pictogram forgot password verification:: ";
+                $subject="Forgot Password";
+            Mail::to($to)->send(new  sendmail($otp,$message,$subject));
+            return redirect('/resetpass')->withSent('An OTP has been sent to Your Gmail Account');
+            }
+            else{
+                return redirect('/checkemail')->withError("We Can't find you! Try Again");
+            }
+        }
+        return view('passwordreset.reset',['page_title' => 'Pictogram - Verify Email']);
+    }
+
+    public function resetpass(Request $req) {
+        $tempotp = Session::get('temp_otp');
+        $tempemail=Session::get('useremail');
+        $submit = $req['submit'];
+        if (isset($submit)) {
+            $req->validate([
+                'otpcheck'=>'required',
+                'new_pass'=>'required'
+            ]);
+
+            if ($tempotp==$req['otpcheck']) {
+               $pass= Hash::make($req['new_pass']);
+                $Save=User::where('email',$tempemail)->update(['password'=>$pass]);
+                Session::flush();
+                return redirect()->route('login')->withSuccess('You password has been reset');
+            }
+            else{
+                // Session::flush();
+                return redirect('/resetpass')->withError('Incorrect OTP!');
+            }
+        }
+        return view('passwordreset.resetpassword',['page_title' => 'Pictogram - Password Reset']);
     }
 
     public function logout()
     {
-        \Session::flush();
+        Session::flush();
         Auth::logout();
         return redirect('/login');
     }

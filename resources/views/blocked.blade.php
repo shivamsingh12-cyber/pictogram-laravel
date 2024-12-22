@@ -6,13 +6,13 @@
 
                     <img class="mb-4" src="img/pictogram.png" alt="" height="45">
                 </div>
-                <h1 class="h5 mb-3 fw-normal">Hello, User Your Account Is Blocked By Admin</h1>
+                <h1 class="h5 mb-3 fw-normal">Hello, {{ Auth()->user()->first_name }} {{ Auth()->user()->last_name }} Your Account Is Blocked By Admin</h1>
 
 
 
 
                 <div class="mt-3 d-flex justify-content-between align-items-center">
-                    <button class="btn btn-danger" type="submit">Logout</button>
+                    <a class="btn btn-danger" href="/logout">Logout</a>
 
 
 
