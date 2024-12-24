@@ -27,7 +27,7 @@ class Controller extends BaseController
                 'last_name' => 'required',
                 'gender' => 'required',
                 'email' => 'required|email|unique:users,email',
-                'username' => 'required',
+                'username' => 'required|unique:users,username',
                 'userpass' => 'required|alpha_num|min:8'
             ]);
 
@@ -71,6 +71,7 @@ class Controller extends BaseController
                     Session::put('user_otp',$otp);
                     $message="Pictogram Verification OTP is:: ";
                     $subject="Pictogram Verification";
+                    User::where('id',$userid)->update(['profile_pic'=>'default_pic.jpg']);
                 Mail::to($to)->send(new  sendmail($otp,$message,$subject));
                 return redirect('/verify')->withSent('An OTP has been sent to Your Gmail Account');
                 }
@@ -90,18 +91,8 @@ class Controller extends BaseController
 
     public function dashboard()
     {
-    //    if (Auth::check() && Auth::user()->ac_status==1) {
-    //     // return view('mainpage.home', ['page_title' => 'Home']);
-        return view('mainpage.home', ['page_title' => 'Home']);
-    //    }
-    //    elseif (Auth::check() && Auth::user()->ac_status==2) {
-    //     // return view('blocked', ['page_title' => 'Blocked']);
-    //     return redirect('/block');
-    //    }
-    //     else{
-    //         // return view('verified', ['page_title' => 'Verify here']);
-    //         return redirect('/verify');
-    //     }
+       return view('mainpage.home', ['page_title' => 'Home']);
+
     }
     
    
@@ -183,6 +174,46 @@ class Controller extends BaseController
         return view('passwordreset.resetpassword',['page_title' => 'Pictogram - Password Reset']);
     }
 
+    public function editprofile(Request $req)
+    {
+      
+        $submit=$req['submit'];
+        if (isset($submit)) {
+       
+            $req->validate([
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'username' => 'required',
+            ]);
+               if (count(User::select('username')->where('username',$req['username'])->get())==1 || count(User::select('username')->where('username',$req['username'])->get())==0) {
+                    $username=$req['username'];
+                
+               } 
+               else {
+                $req->validate([
+                    'username' => 'unique:users,username'
+                ]);
+               }
+               if (!isset($req['password'])) {
+                    $password=  Auth::user()->getAuthPassword();
+               }
+               else
+                    $password=Hash::make($req['password']);
+
+                    User::where('email',Auth::user()->email)->update([
+                        'first_name'=>$req['first_name'],
+                        'last_name'=>$req['last_name'],
+                        'gender'=>$req['gender'],
+                        'username'=>$username,
+                        'password'=>$password
+                    ]);
+                    return redirect()->route('edit_profile')->withSuccess('Yeah! We Got Your Updated Data');
+
+            
+
+        }
+            return view('mainpage.editprofile',['page_title' => 'Pictogram - Edit Profile']);
+    }
     public function logout()
     {
         Session::flush();

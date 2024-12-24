@@ -157,12 +157,12 @@
 
         <div class="col-4 mt-4 p-3">
             <div class="d-flex align-items-center p-2">
-                <div><img src="./img/profile.jpg" alt="" height="60" class="rounded-circle border">
+                <div><img src="./img/{{Auth::user()->profile_pic}}" alt="" height="60" class="rounded-circle border">
                 </div>
                 <div>&nbsp;&nbsp;&nbsp;</div>
                 <div class="d-flex flex-column justify-content-center align-items-center">
-                    <h6 style="margin: 0px;">Monu Giri</h6>
-                    <p style="margin:0px;" class="text-muted">@oyeitsmg</p>
+                    <h6 style="margin: 0px;">{{Auth::user()->first_name}} {{Auth::user()->last_name}}</h6>
+                    <p style="margin:0px;" class="text-muted"><span>@</span>{{Auth::user()->username}}</p>
                 </div>
             </div>
             <div>
