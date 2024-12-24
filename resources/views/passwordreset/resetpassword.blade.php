@@ -4,8 +4,8 @@
             <form action="" method="POST">
                 @csrf
                 <div class="d-flex justify-content-center">
-                    @if(session()->has('success'))
-                    <div class="alert alert-success">{{session()->get('success')}}</div>
+                    @if(session()->has('sent'))
+                    <div class="alert alert-success">{{session()->get('sent')}}</div>
                     @endif
                     @if(session()->has('error'))
                     <div class="alert alert-danger">{{session()->get('error')}}</div>

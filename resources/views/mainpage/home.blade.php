@@ -157,7 +157,7 @@
 
         <div class="col-4 mt-4 p-3">
             <div class="d-flex align-items-center p-2">
-                <div><img src="./img/{{Auth::user()->profile_pic}}" alt="" height="60" class="rounded-circle border">
+                <div><img src="/storage/{{Auth::user()->profile_pic}}" alt="" height="60" class="rounded-circle border">
                 </div>
                 <div>&nbsp;&nbsp;&nbsp;</div>
                 <div class="d-flex flex-column justify-content-center align-items-center">

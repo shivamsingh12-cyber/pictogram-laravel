@@ -179,13 +179,23 @@ class Controller extends BaseController
       
         $submit=$req['submit'];
         if (isset($submit)) {
-       
+
+            $file= $req->file('image');
+            if (file_exists($file)) {
+                $filename=$file->getClientOriginalName();
+                $path=$file->storeAs('profile',$filename,'public');
+            }
+            else
+                $path='profile/men.jpg';
+
             $req->validate([
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'username' => 'required',
             ]);
-               if (count(User::select('username')->where('username',$req['username'])->get())==1 || count(User::select('username')->where('username',$req['username'])->get())==0) {
+       
+            
+               if (count(User::select('username')->where([['username',$req['username']],['id','!=',Auth()->id()]])->get())==0) {
                     $username=$req['username'];
                 
                } 
@@ -194,8 +204,8 @@ class Controller extends BaseController
                     'username' => 'unique:users,username'
                 ]);
                }
-               if (!isset($req['password'])) {
-                    $password=  Auth::user()->getAuthPassword();
+               if (isset($req['password'])) {
+                    $password=  Auth::user()->password;
                }
                else
                     $password=Hash::make($req['password']);
@@ -205,12 +215,10 @@ class Controller extends BaseController
                         'last_name'=>$req['last_name'],
                         'gender'=>$req['gender'],
                         'username'=>$username,
-                        'password'=>$password
+                        'password'=>$password,
+                        'profile_pic'=>$path
                     ]);
                     return redirect()->route('edit_profile')->withSuccess('Yeah! We Got Your Updated Data');
-
-            
-
         }
             return view('mainpage.editprofile',['page_title' => 'Pictogram - Edit Profile']);
     }
