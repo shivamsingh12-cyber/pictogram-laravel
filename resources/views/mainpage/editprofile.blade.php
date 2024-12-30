@@ -12,7 +12,17 @@
                 <h1 class="h5 mb-3 fw-normal">Edit Profile</h1>
              
                 <div class="form-floating mt-1 col-6">
-                    <img src="/storage/{{Auth::user()->profile_pic}}" class="img-thumbnail my-3" style="height:150px;" alt="face image" >
+                    {{-- <img src="/storage/{{Auth::user()->profile_pic}}" class="img-thumbnail my-3" style="height:150px;" alt="face image" > --}}
+                    @php
+                    if (!isset(Auth()->user()->profile_pic)) {
+                        echo '<img src="/img/default_pic.jpg" alt="" height="30" style="height:150px; class="img-thumbnail my-3">';
+                    }
+                    else{
+
+                    //    echo "<img src='/storage/".{{Auth::user()->profile_pic}}'  height='30' class='rounded-circle border'>";
+                       echo '<img src="/storage/'.Auth()->user()->profile_pic.'" alt=""style="height:150px; height="30" class="img-thumbnail my-3">';
+                    }
+                @endphp
                     <div class="mb-3">
                         <label for="formFile" class="form-label">Change Profile Picture</label>
                         <input class="form-control" name="image" type="file" id="formFile">

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
 use App\Mail\sendmail;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -61,7 +63,7 @@ class Controller extends BaseController
             ]);
             $fieldType = filter_var($req->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
        
-            if (\Auth::attempt(array($fieldType => $req['email'], 'password' => $req['password']))) {
+            if (Auth::attempt(array($fieldType => $req['email'], 'password' => $req['password']))) {
                 // $_SESSION['user']=Auth::user();
                 if (Auth::check() && Auth::user()->ac_status==0) {
                     $to=Auth::user()->email;
@@ -71,7 +73,7 @@ class Controller extends BaseController
                     Session::put('user_otp',$otp);
                     $message="Pictogram Verification OTP is:: ";
                     $subject="Pictogram Verification";
-                    User::where('id',$userid)->update(['profile_pic'=>'default_pic.jpg']);
+                    // User::where('id',$userid)->update(['profile_pic'=>'default_pic.jpg']);
                 Mail::to($to)->send(new  sendmail($otp,$message,$subject));
                 return redirect('/verify')->withSent('An OTP has been sent to Your Gmail Account');
                 }
@@ -91,7 +93,12 @@ class Controller extends BaseController
 
     public function dashboard()
     {
-       return view('mainpage.home', ['page_title' => 'Home']);
+        $posts = DB::table('posts')
+        ->select('posts.*','users.id','users.first_name','users.last_name','users.profile_pic','users.username')
+        ->join('users','users.id','=','posts.user_id')->orderBy('posts.id','desc')
+        ->get();
+      
+       return view('mainpage.home', ['page_title' => 'Pictogram - Home','posts'=>$posts]);
 
     }
     
@@ -222,6 +229,46 @@ class Controller extends BaseController
         }
             return view('mainpage.editprofile',['page_title' => 'Pictogram - Edit Profile']);
     }
+
+    public function addposts(Request $req) {
+        $submit=$req['submit'];
+        if (isset($submit)) {
+            $req->validate([
+                'post_img'=>'required'
+            ]);
+            $file= $req->file('post_img');
+       
+            $filename=$file->getClientOriginalName();
+            $path=$file->storeAs('posts',$filename,'public');
+            $text= $req['post_text'];
+
+            $posts = new Post; 
+
+            $posts->user_id = Auth()->id();
+            $posts->post_img = $path;
+            $posts->post_text = $text;
+            $posts->save();
+            return redirect('/')->withSuccess('You Post has been Created!');
+        }
+        else
+        return "doesn't happen anything";
+    }
+
+    public function mainprofile(string $uname) {
+        
+            $query= User::where('username',$uname)->get();
+            // return $query;
+            if (isset($query)) {
+                return view('mainpage.nouser',['page_title' => 'Pictogram - No User Found']);
+            }
+            else{
+                
+                return view('mainpage.mainprofile',['page_title' => 'Pictogram - Your Profile']);
+            }
+            
+        
+    }
+ 
     public function logout()
     {
         Session::flush();

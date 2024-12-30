@@ -34,7 +34,9 @@ Route::group(['middleware'=>'auth'],function(){
     // Route::get('/sendmail',[EmailController::class,'sendEmail'])->name('/sendmail');
     Route::any('/verify',[Controller::class,'verify'])->name('verify');
     Route::any('/home', [Controller::class,'dashboard'])->middleware(UserStatus::class);
-    Route::any('/editprofile',[Controller::class,'editprofile'])->name('edit_profile');
-    Route::any('/home?editprofile', [Controller::class,'dashboard']);
+    Route::any('/editprofile',[Controller::class,'editprofile'])->name('edit_profile')->middleware(UserStatus::class);
+    Route::any('/add_posts',[Controller::class,'addposts'])->name('add_posts')->middleware(UserStatus::class);
+    // Route::any('/home?editprofile', [Controller::class,'dashboard']);
+    Route::get('/mainprofile/{name?}',[Controller::class,'mainprofile'])->name('main_profile')->middleware(UserStatus::class);
     Route::any('/logout', [Controller::class,'logout']);
 });
