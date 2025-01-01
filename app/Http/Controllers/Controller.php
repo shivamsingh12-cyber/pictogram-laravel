@@ -256,15 +256,19 @@ class Controller extends BaseController
 
     public function mainprofile(string $uname) {
         
-            $query= User::where('username',$uname)->get();
+            $query= User::select('username')->where('username',$uname)->value('username');
             // return $query;
-            if (isset($query)) {
-                return view('mainpage.nouser',['page_title' => 'Pictogram - No User Found']);
+            if ($uname==$query && Auth()->user()) {
+                $data=User::where('username',$uname)->get();
+                $posts=Post::where('user_id',Auth()->id())->get();
+                // return $posts;
+                return view('mainpage.mainprofile',['page_title'=>Auth::user()->first_name.' '.Auth::user()->last_name,'userdata'=>$data,'posts'=>$posts]);
             }
-            else{
+            else
+            return view('mainpage.nouser',['page_title' => 'Pictogram - No User']);
+           
                 
-                return view('mainpage.mainprofile',['page_title' => 'Pictogram - Your Profile']);
-            }
+            
             
         
     }

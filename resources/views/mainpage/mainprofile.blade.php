@@ -1,15 +1,18 @@
 @include('pages.header')
 @include('navigation.usernav')
 
+@foreach ($userdata as $user )
     <div class="container col-9 rounded-0">
         <div class="col-12 rounded p-4 mt-4 d-flex gap-5">
-            <div class="col-4 d-flex justify-content-end align-items-start"><img src="{{url('/')}}/img/profile.jpg"
+            <div class="col-4 d-flex justify-content-end align-items-start"><img src="/storage/{{$user->profile_pic}}"
                     class="img-thumbnail rounded-circle my-3" style="height:170px;" alt="...">
             </div>
             <div class="col-8">
                 <div class="d-flex flex-column">
+                        
+                   
                     <div class="d-flex gap-5 align-items-center">
-                        <span style="font-size: xx-large;">Monu</span>
+                        <span style="font-size: xx-large;">{{$user->first_name}} {{$user->last_name}}</span>
                         <div class="dropdown">
                             <span class="" style="font-size:xx-large" type="button" id="dropdownMenuButton1"
                                 data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots"></i> </span>
@@ -19,14 +22,14 @@
                             </ul>
                         </div>
                     </div>
-                    <span style="font-size: larger;" class="text-secondary">@oyeitsmg</span>
+                    <span style="font-size: larger;" class="text-secondary">{{'@'.$user->username}}</span>
                     <div class="d-flex gap-2 align-items-center my-3">
 
                         <a class="btn btn-sm btn-primary"><i class="bi bi-file-post-fill"></i> 22 Posts</a>
                         <a class="btn btn-sm btn-primary"><i class="bi bi-people-fill"></i> 100 Followers</a>
                         <a class="btn btn-sm btn-primary"><i class="bi bi-person-fill"></i> 50 Following</a>
 
-
+                      
                     </div>
 
                     <div class="d-flex gap-2 align-items-center my-1">
@@ -39,31 +42,27 @@
                 </div>
             </div>
 
-
+            
         </div>
         <h3 class="border-bottom" style="display: flex; justify-content: center;"> All Posts</h3>
         <div class="gallery d-flex flex-wrap justify-content-center gap-2 mb-4">
-            <img src="{{url('/')}}/img/post2.jpg" width="300px" class="rounded" />
-            <img src="{{url('/')}}/img/post.jpg" width="300px" class="rounded" />
-            <img src="{{url('/')}}/img/post3.png" width="300px" class="rounded" />
-            <img src="{{url('/')}}/img/post4.jpg" width="300px" class="rounded" />
-            <img src="{{url('/')}}/img/post5.jpg" width="300px" class="rounded" />
-            <img src="{{url('/')}}/img/post.jpg" width="300px" class="rounded" />
-            <img src="{{url('/')}}/img/post.jpg" width="300px" class="rounded" />
-            <img src="{{url('/')}}/img/post2.jpg" width="300px" class="rounded" />
-            <img src="{{url('/')}}/img/post3.png" width="300px" class="rounded" />
-
+                @foreach ($posts as $post )
+                <img src="/storage/{{$post->post_img}}" width="300px" class="rounded" />
+                {{-- <img src="{{url('/')}}/img/post.jpg" width="300px" class="rounded" /> --}}
+                
+                
+                @endforeach
+            </div>
+            
+            
+            
+            
         </div>
-
-
-
-
-    </div>
-
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Launch demo modal
-    </button>
+        
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Launch demo modal
+        </button>
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -144,5 +143,6 @@
 
             </div>
         </div>
+        @endforeach
     </div>
 @include('pages.footer')
