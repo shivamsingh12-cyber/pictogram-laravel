@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Models\follower;
 use App\Models\Post;
 use App\Models\User;
 use App\Mail\sendmail;
@@ -97,8 +99,29 @@ class Controller extends BaseController
         ->select('posts.*','users.id','users.first_name','users.last_name','users.profile_pic','users.username')
         ->join('users','users.id','=','posts.user_id')->orderBy('posts.id','desc')
         ->get();
-      
-       return view('mainpage.home', ['page_title' => 'Pictogram - Home','posts'=>$posts]);
+        $users=User::where('id','!=',Auth()->id())->limit(3)->get();
+
+        // $userquery=User::select('id')->where('id','!=',Auth()->id())->value('id');
+        // return $user;
+        $filter=array();
+        foreach ($users as $user) {
+            $followquery=follower::where([
+                ['follower_id',Auth()->id()],
+                ['user_id',$user->id]
+                 ])->get();
+                //  return $user;
+                    if (empty($followquery->count())) {
+                             $filter[]= $user;
+                            //  return $filter;
+                    }
+                
+                 
+        }
+    //    $user=$users;
+                
+                    // return $filter_list;
+
+       return view('mainpage.home', ['page_title' => 'Pictogram - Home','posts'=>$posts,'users'=>$filter]);
 
     }
     

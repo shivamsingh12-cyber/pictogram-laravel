@@ -3,6 +3,7 @@
 @if(session()->has('success'))
 <div class="alert alert-success">{{session()->get('success')}}</div>
 @endif
+
     <div class="container col-9 rounded-0 d-flex justify-content-between">
         <div class="col-8">
          @foreach ($posts as $post)
@@ -62,14 +63,15 @@
             </div>
             <div>
                 <h6 class="text-muted p-2">You Can Follow Them</h6>
+                @foreach ($users as $user)   
                 <div class="d-flex justify-content-between">
                     <div class="d-flex align-items-center p-2">
-                        <div><img src="./img/profile2.jpg" alt="" height="40" class="rounded-circle border">
+                        <div><img src="/storage/{{$user->profile_pic}}" alt="" height="40" class="rounded-circle border">
                         </div>
                         <div>&nbsp;&nbsp;</div>
                         <div class="d-flex flex-column justify-content-center">
-                            <h6 style="margin: 0px;font-size: small;">Bill Gatesaw</h6>
-                            <p style="margin:0px;font-size:small" class="text-muted">@funnybill</p>
+                            <h6 style="margin: 0px;font-size: small;">{{$user->first_name}} {{$user->last_name}}</h6>
+                            <p style="margin:0px;font-size:small" class="text-muted">{{'@'.$user->username}}</p>
                         </div>
                     </div>
                     <div class="d-flex align-items-center">
@@ -77,96 +79,8 @@
 
                     </div>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center p-2">
-                        <div><img src="./img/profile3.jpg" alt="" height="40" class="rounded-circle border">
-                        </div>
-                        <div>&nbsp;&nbsp;</div>
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 style="margin: 0px;font-size: small;">Tailor Swift</h6>
-                            <p style="margin:0px;font-size:small" class="text-muted">@itstailorsong</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-sm btn-primary">Follow</button>
-
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center p-2">
-                        <div><img src="./img/profile4.jpg" alt="" height="40" class="rounded-circle border">
-                        </div>
-                        <div>&nbsp;&nbsp;</div>
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 style="margin: 0px;font-size: small;">Siri Bottom</h6>
-                            <p style="margin:0px;font-size:small" class="text-muted">@siribottom34</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-sm btn-primary">Follow</button>
-
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center p-2">
-                        <div><img src="./img/profile5.jpg" alt="" height="40" class="rounded-circle border">
-                        </div>
-                        <div>&nbsp;&nbsp;</div>
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 style="margin: 0px;font-size: small;">Angelika Johnson</h6>
-                            <p style="margin:0px;font-size:small" class="text-muted">@ajohnson23</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-sm btn-primary">Follow</button>
-
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center p-2">
-                        <div><img src="./img/profile6.jpg" alt="" height="40" class="rounded-circle border">
-                        </div>
-                        <div>&nbsp;&nbsp;</div>
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 style="margin: 0px;font-size: small;">Steve Jon</h6>
-                            <p style="margin:0px;font-size:small" class="text-muted">@steve1998</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-sm btn-primary">Follow</button>
-
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center p-2">
-                        <div><img src="./img/profile7.jpg" alt="" height="40" class="rounded-circle border">
-                        </div>
-                        <div>&nbsp;&nbsp;</div>
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 style="margin: 0px;font-size: small;">Edward Smith</h6>
-                            <p style="margin:0px;font-size:small" class="text-muted">@edwardsm</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-sm btn-primary">Follow</button>
-
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center p-2">
-                        <div><img src="./img/profile8.jpg" alt="" height="40" class="rounded-circle border">
-                        </div>
-                        <div>&nbsp;&nbsp;</div>
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 style="margin: 0px;font-size: small;">Mayank Sharma</h6>
-                            <p style="margin:0px;font-size:small" class="text-muted">@mayankiscool</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-sm btn-primary" style="">Follow</button>
-
-                    </div>
-                </div>
+                @endforeach
+         
 
 
             </div>

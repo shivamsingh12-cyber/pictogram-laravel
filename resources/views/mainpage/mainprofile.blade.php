@@ -48,9 +48,7 @@
         <div class="gallery d-flex flex-wrap justify-content-center gap-2 mb-4">
                 @foreach ($posts as $post )
                 <img src="/storage/{{$post->post_img}}" width="300px" class="rounded" />
-                {{-- <img src="{{url('/')}}/img/post.jpg" width="300px" class="rounded" /> --}}
-                
-                
+                           
                 @endforeach
             </div>
             
