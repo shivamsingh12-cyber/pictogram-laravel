@@ -75,11 +75,14 @@
                         </div>
                     </div>
                     <div class="d-flex align-items-center">
-                        <button class="btn btn-sm btn-primary">Follow</button>
+                        <button class="btn btn-sm btn-primary followbtn" data-user-id="{{$user->id}}">Follow</button>
 
                     </div>
                 </div>
                 @endforeach
+                @if (count($users)<1)
+                    {!!'<p class="p-2 boder rounded shadow text-center">No suggestions for you! </p>'!!}
+                @endif
          
 
 

@@ -1,3 +1,5 @@
+// const method  = require("lodash");
+
 var input = document.querySelector('#select_post_img');
 
 input.addEventListener('change',preview);
@@ -15,3 +17,4 @@ function preview() {
             image.setAttribute('style','display:');
         }
 }
+

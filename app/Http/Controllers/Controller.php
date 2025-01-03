@@ -109,10 +109,9 @@ class Controller extends BaseController
                 ['follower_id',Auth()->id()],
                 ['user_id',$user->id]
                  ])->get();
-                //  return $user;
                     if (empty($followquery->count())) {
                              $filter[]= $user;
-                            //  return $filter;
+                           
                     }
                 
                  
@@ -123,6 +122,27 @@ class Controller extends BaseController
 
        return view('mainpage.home', ['page_title' => 'Pictogram - Home','posts'=>$posts,'users'=>$filter]);
 
+    }
+
+    public function follow(Request $req) {
+       $current_user=Auth()->id();
+            $user=$req->json('user_id');
+            // return $user;
+       $query= follower::create([
+        'follower_id'=>$current_user,
+        'user_id'=>$user
+       ]);
+        if ($query) {
+            return response()->json([
+                'response'=>true,
+            ]);
+        }
+        else {
+            return response()->json([
+                'response'=>false
+            ]);
+        }
+       
     }
     
    

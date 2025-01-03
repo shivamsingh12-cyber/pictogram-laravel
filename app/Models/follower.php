@@ -9,5 +9,9 @@ class follower extends Model
 {
     use HasFactory;
 
-    // protected $guarded =[];
+    protected $guarded =[];
+    
+    protected $casts = [
+        'user_id' => 'array',
+    ];
 }

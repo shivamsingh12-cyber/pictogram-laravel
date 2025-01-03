@@ -130,8 +130,8 @@
                         <div class="input-group p-2 border-top">
                             <input type="text" class="form-control rounded-0 border-0" placeholder="say something.."
                                 aria-label="Recipient's username" aria-describedby="button-addon2">
-                            <button class="btn btn-outline-primary rounded-0 border-0" type="button"
-                                id="button-addon2">Post</button>
+                            <button class="btn btn-outline-primary rounded-0 border-0 " type="button"
+                                id="button-addon2" >Post</button>
                         </div>
                     </div>
 

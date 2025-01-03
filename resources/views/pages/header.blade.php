@@ -10,6 +10,7 @@
     <link href="{{url('/')}}/bootstrap/icons/bootstrap-icons.css" rel="stylesheet">
     <link href="{{url('/')}}/css/main.css" rel="stylesheet">
     <title>{{$page_title}}</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
