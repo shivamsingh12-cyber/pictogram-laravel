@@ -99,28 +99,42 @@ class Controller extends BaseController
         ->select('posts.*','users.id','users.first_name','users.last_name','users.profile_pic','users.username')
         ->join('users','users.id','=','posts.user_id')->orderBy('posts.id','desc')
         ->get();
-        $users=User::where('id','!=',Auth()->id())->limit(3)->get();
 
-        // $userquery=User::select('id')->where('id','!=',Auth()->id())->value('id');
-        // return $user;
+        $listpost=array();
+        foreach ($posts as $post) {
+            // return $post;
+            $followquery=follower::where([
+                ['follower_id',Auth()->id()],
+                ['user_id',$post->user_id]
+                 ])->get();
+                    if ($followquery->count() || $post->user_id==Auth()->id()) {
+                             $listpost[]= $post;
+                           
+                    }
+                 
+        }
+
+
+        $users=User::where('id','!=',Auth()->id())->limit(3)->get();
+        
+        // for follow suggestion
         $filter=array();
         foreach ($users as $user) {
             $followquery=follower::where([
                 ['follower_id',Auth()->id()],
                 ['user_id',$user->id]
                  ])->get();
-                    if (empty($followquery->count())) {
+                    if (empty($followquery->count()) && count($filter)<3) {
                              $filter[]= $user;
                            
                     }
-                
                  
         }
     //    $user=$users;
                 
                     // return $filter_list;
 
-       return view('mainpage.home', ['page_title' => 'Pictogram - Home','posts'=>$posts,'users'=>$filter]);
+       return view('mainpage.home', ['page_title' => 'Pictogram - Home','posts'=>$listpost,'users'=>$filter]);
 
     }
 
@@ -299,12 +313,12 @@ class Controller extends BaseController
 
     public function mainprofile(string $uname) {
         
-            $query= User::select('username')->where('username',$uname)->value('username');
+            $query= User::where('username',$uname)->value('username');
             // return $query;
             if ($uname==$query && Auth()->user()) {
                 $data=User::where('username',$uname)->get();
-                $posts=Post::where('user_id',Auth()->id())->get();
-                // return $posts;
+                $posts=Post::where('user_id',$data[0]['id'])->get();
+                // return ;
                 return view('mainpage.mainprofile',['page_title'=>Auth::user()->first_name.' '.Auth::user()->last_name,'userdata'=>$data,'posts'=>$posts]);
             }
             else

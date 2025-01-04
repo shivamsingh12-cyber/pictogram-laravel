@@ -4,8 +4,15 @@
 @foreach ($userdata as $user )
     <div class="container col-9 rounded-0">
         <div class="col-12 rounded p-4 mt-4 d-flex gap-5">
-            <div class="col-4 d-flex justify-content-end align-items-start"><img src="/storage/{{$user->profile_pic}}"
-                    class="img-thumbnail rounded-circle my-3" style="height:170px;" alt="...">
+            <div class="col-4 d-flex justify-content-end align-items-start">
+                @if (empty($user->profile_pic))
+                <img src="/img/default_pic.jpg" class="img-thumbnail rounded-circle my-3" style="height:170px;" alt="...">
+                {{-- <div><img src="/img/default_pic.jpg" alt="" height="40" class="rounded-circle border"> --}}
+               @else
+               <img src="/storage/{{$user->profile_pic}}" class="img-thumbnail rounded-circle my-3" style="height:170px;" alt="...">
+                  {{-- <div><img src="/storage/{{$user->profile_pic}}" alt="" height="40" class="rounded-circle border">    --}}
+              @endif
+                {{-- <img src="/storage/{{$user->profile_pic}}" class="img-thumbnail rounded-circle my-3" style="height:170px;" alt="..."> --}}
             </div>
             <div class="col-8">
                 <div class="d-flex flex-column">
@@ -13,6 +20,7 @@
                    
                     <div class="d-flex gap-5 align-items-center">
                         <span style="font-size: xx-large;">{{$user->first_name}} {{$user->last_name}}</span>
+                        @if ($user->id!=Auth()->id())   
                         <div class="dropdown">
                             <span class="" style="font-size:xx-large" type="button" id="dropdownMenuButton1"
                                 data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots"></i> </span>
@@ -21,6 +29,8 @@
                                 <li><a class="dropdown-item" href="#"><i class="bi bi-x-circle-fill"></i> Block</a></li>
                             </ul>
                         </div>
+                        @endif
+
                     </div>
                     <span style="font-size: larger;" class="text-secondary">{{'@'.$user->username}}</span>
                     <div class="d-flex gap-2 align-items-center my-3">
@@ -34,7 +44,9 @@
 
                     <div class="d-flex gap-2 align-items-center my-1">
 
-                        <a class="btn btn-sm btn-danger">Unfollow</a>
+                       @if ($user->id!=Auth()->id())
+                       <a class="btn btn-sm btn-danger">Unfollow</a>
+                       @endif
 
 
 
@@ -45,7 +57,10 @@
             
         </div>
         <h3 class="border-bottom" style="display: flex; justify-content: center;"> All Posts</h3>
-        <div class="gallery d-flex flex-wrap justify-content-center gap-2 mb-4">
+        <div class="gallery d-flex flex-wrap  gap-2 mb-4">
+            @if (count($posts)<1)
+                {!!"<h1 class='mt-5 p-2 boder rounded shadow text-center'>Nothing to see here </h1>" !!}
+            @endif
                 @foreach ($posts as $post )
                 <img src="/storage/{{$post->post_img}}" width="300px" class="rounded" />
                            
@@ -141,6 +156,6 @@
 
             </div>
         </div>
-        @endforeach
     </div>
+@endforeach
 @include('pages.footer')
