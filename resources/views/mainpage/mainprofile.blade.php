@@ -35,9 +35,9 @@
                     <span style="font-size: larger;" class="text-secondary">{{'@'.$user->username}}</span>
                     <div class="d-flex gap-2 align-items-center my-3">
 
-                        <a class="btn btn-sm btn-primary"><i class="bi bi-file-post-fill"></i> 22 Posts</a>
-                        <a class="btn btn-sm btn-primary"><i class="bi bi-people-fill"></i> 100 Followers</a>
-                        <a class="btn btn-sm btn-primary"><i class="bi bi-person-fill"></i> 50 Following</a>
+                        <a class="btn btn-sm btn-primary"><i class="bi bi-file-post-fill"></i> {{count($posts)}} Posts</a>
+                        <a class="btn btn-sm btn-primary"><i class="bi bi-people-fill"></i> {{count($followers)}} Followers</a>
+                        <a class="btn btn-sm btn-primary"><i class="bi bi-person-fill"></i> {{count($followings)}} Following</a>
 
                       
                     </div>
@@ -45,8 +45,18 @@
                     <div class="d-flex gap-2 align-items-center my-1">
 
                        @if ($user->id!=Auth()->id())
-                       <a class="btn btn-sm btn-danger">Unfollow</a>
+                            @if(count($followstatus)<1)
+                            <button class="btn btn-sm btn-primary followbtn" data-user-id={{$user->id}}>Follow</button>
+                            @else
+                            <button class="btn btn-sm btn-danger unfollowbtn" data-user-id={{$user->id}}>Unfollow</button>
+                            @endif
                        @endif
+
+                      
+                    
+                       
+                     
+                     
 
 
 
@@ -57,9 +67,9 @@
             
         </div>
         <h3 class="border-bottom" style="display: flex; justify-content: center;"> All Posts</h3>
-        <div class="gallery d-flex flex-wrap  gap-2 mb-4">
+        <div class="gallery d-flex flex-wrap position-relative  gap-2 mb-4">
             @if (count($posts)<1)
-                {!!"<h1 class='mt-5 p-2 boder rounded shadow text-center'>Nothing to see here </h1>" !!}
+                {!!"<h1 class='mt-5 p-2 boder rounded shadow text-center position-absolute top-0 start-50 translate-middle-x'>Nothing to see here </h1>" !!}
             @endif
                 @foreach ($posts as $post )
                 <img src="/storage/{{$post->post_img}}" width="300px" class="rounded" />

@@ -158,6 +158,27 @@ class Controller extends BaseController
         }
        
     }
+    public function unfollow(Request $req) {
+       $current_user=Auth()->id();
+            $user=$req->json('user_id');
+            // return $user;
+       $query= follower::where([
+        ['follower_id',$current_user],
+        ['user_id',$user]
+       ]);
+       $query->delete();
+        if ($query) {
+            return response()->json([
+                'response'=>true,
+            ]);
+        }
+        else {
+            return response()->json([
+                'response'=>false
+            ]);
+        }
+       
+    }
     
    
     public function block()
@@ -315,19 +336,20 @@ class Controller extends BaseController
         
             $query= User::where('username',$uname)->value('username');
             // return $query;
-            if ($uname==$query && Auth()->user()) {
+            if ($uname==$query && Auth()->check()) {
                 $data=User::where('username',$uname)->get();
                 $posts=Post::where('user_id',$data[0]['id'])->get();
-                // return ;
-                return view('mainpage.mainprofile',['page_title'=>Auth::user()->first_name.' '.Auth::user()->last_name,'userdata'=>$data,'posts'=>$posts]);
+                $getfollowers=follower::where('user_id',$data[0]['id'])->get();
+                $getfollowing=follower::where('follower_id',$data[0]['id'])->get();
+                $followstatus=follower::where([
+                    ['follower_id',Auth()->id()],
+                    ['user_id',$data[0]['id']]
+                     ])->get();
+                    //  return $followstatus;
+                return view('mainpage.mainprofile',['page_title'=>Auth::user()->first_name.' '.Auth::user()->last_name,'userdata'=>$data,'posts'=>$posts,'followers'=>$getfollowers,'followings'=>$getfollowing,'followstatus'=>$followstatus]);
             }
             else
             return view('mainpage.nouser',['page_title' => 'Pictogram - No User']);
-           
-                
-            
-            
-        
     }
  
     public function logout()
