@@ -336,17 +336,63 @@ class Controller extends BaseController
         
             $query= User::where('username',$uname)->value('username');
             // return $query;
+            $datauser=null;
             if ($uname==$query && Auth()->check()) {
                 $data=User::where('username',$uname)->get();
                 $posts=Post::where('user_id',$data[0]['id'])->get();
+
                 $getfollowers=follower::where('user_id',$data[0]['id'])->get();
                 $getfollowing=follower::where('follower_id',$data[0]['id'])->get();
+                // $checklfollower=follower::select('follower_id')->where('');
+                // return $allfollower;
                 $followstatus=follower::where([
                     ['follower_id',Auth()->id()],
                     ['user_id',$data[0]['id']]
                      ])->get();
-                    //  return $followstatus;
-                return view('mainpage.mainprofile',['page_title'=>Auth::user()->first_name.' '.Auth::user()->last_name,'userdata'=>$data,'posts'=>$posts,'followers'=>$getfollowers,'followings'=>$getfollowing,'followstatus'=>$followstatus]);
+                    //  foreach ($getfollowing as $following) {
+
+                    //      $followstatus1=follower::where([
+
+                    //          ['follower_id',Auth()->id()],
+                    //          ['user_id',$following->follower_id]
+                    //           ])->count();
+                    //  }
+                    //  return $followstatus1;
+
+                //    $getdata=array();
+                //      foreach ($getfollowers as $follower) {
+                //         $getdata[]=User::where('id',$follower['follower_id'])->join('followers','users.id','=','followers.follower_id')->get();
+                //     }
+        
+                    
+                        //  $getdata=DB::table('users')
+                        //  ->select('users.*','followers.follower_id')
+                        //  ->join('followers','users.id','=','followers.user_id')->where('followers.follower_id',Auth()->id())->get();
+                    // //  return $getdata;
+                     $getdata=array();
+                     foreach($getfollowers as $follower){
+                        // $getdata=User::where('id',$follower['follower_id'])->get();
+                        // $getdata[]=User::where('id',$follower['follower_id'])->join('followers','users.id','=','followers.follower_id')->get();
+                        
+                         $getdata=DB::table('users')
+                         ->select('users.*','followers.follower_id','followers.user_id')
+                         ->join('followers','users.id','=','followers.follower_id')->where('followers.user_id',$data[0]['id'])->get();
+                  
+                     }
+                    //  return $getdata;
+                     $getdata1=array();
+                     foreach($getfollowing as $following){
+                        // $getdata1[]=User::where('id',$following['user_id'])->get();
+
+                        $getdata1=DB::table('users')
+                        ->select('users.*','followers.follower_id','followers.user_id')
+                        ->join('followers','users.id','=','followers.user_id')->where('followers.follower_id',$data[0]['id'])->get();
+                     }
+                        //    return $getdata1;
+                    
+        
+                   
+            return view('mainpage.mainprofile',['page_title'=>Auth::user()->first_name.' '.Auth::user()->last_name,'userdata'=>$data,'posts'=>$posts,'followers'=>$getfollowers,'followings'=>$getfollowing,'followstatus'=>$followstatus,"followerpeople"=>$getdata,'followingpeople'=>$getdata1]);
             }
             else
             return view('mainpage.nouser',['page_title' => 'Pictogram - No User']);

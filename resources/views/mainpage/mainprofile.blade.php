@@ -1,7 +1,121 @@
 @include('pages.header')
 @include('navigation.usernav')
 
-@foreach ($userdata as $user )
+
+
+    <div class="modal fade" id="follower_list" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Followers</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+       
+      
+            <div class="modal-body">
+                @if (empty($followerpeople))
+                    {{'No Followers!'}}
+                @endif 
+            
+                 @foreach ($followerpeople as  $f)
+                {{-- @foreach ($follower as $data) --}}
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex align-items-center p-2">
+                        @if ($f->profile_pic)
+                        <div><img src="/storage/{{$f->profile_pic}}" alt="" height="40" class="rounded-circle border">   
+                        @else
+                            <div><img src="/img/default_pic.jpg" alt="" height="40" class="rounded-circle border">
+                        @endif
+                        </div>
+                        <div>&nbsp;&nbsp;</div>
+                        <div class="d-flex flex-column justify-content-center">
+                          <a href="/mainprofile/{{$f->username}}" class="text-decoration-none text-dark">  <h6 style="margin: 0px;font-size: small;">{{$f->first_name}} {{$f->last_name}}</h6> </a> 
+                            <p style="margin:0px;font-size:small" class="text-muted">{{'@'.$f->username}}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        @if ( checkfollowstatus(Auth()->id(),$f->follower_id))
+                        <button class="btn btn-sm btn-danger unfollowbtn" data-user-id={{$f->follower_id}}>UnFollow</button>
+                        @elseif ($f->follower_id==Auth()->id())
+                        {{-- <button class="btn btn-sm btn-primary followbtn" data-user-id={{$f->user_id}}>Follow</button> --}}
+                        @else 
+                        <button class="btn btn-sm btn-primary followbtn" data-user-id={{$f->follower_id}}>Follow</button>
+                        @endif
+                 
+                        
+                   
+                       
+
+                    </div>
+                </div>
+       
+                  
+             
+                
+     
+            @endforeach
+                
+                
+              
+            </div>
+           
+            </div>
+        </div>
+  </div>
+
+  <div class="modal fade" id="following_list" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Followings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                @if (empty($followingpeople))
+                {{'No Followings!'}}
+            @endif 
+        
+             @foreach ($followingpeople as  $following)
+             {{-- @foreach ($following as $data) --}}
+                 
+             <div class="d-flex justify-content-between">
+                 <div class="d-flex align-items-center p-2">
+                     @if ($following->profile_pic)
+                     <div><img src="/storage/{{$following->profile_pic}}" alt="" height="40" class="rounded-circle border">   
+                     @else
+                         <div><img src="/img/default_pic.jpg" alt="" height="40" class="rounded-circle border">
+                     @endif
+                     </div>
+                     <div>&nbsp;&nbsp;</div>
+                     <div class="d-flex flex-column justify-content-center">
+                       <a href="/mainprofile/{{$following->username}}" class="text-decoration-none text-dark">  <h6 style="margin: 0px;font-size: small;">{{$following->first_name}} {{$following->last_name}}</h6> </a> 
+                         <p style="margin:0px;font-size:small" class="text-muted">{{'@'.$following->username}}</p>
+                     </div>
+                 </div>
+                 <div class="d-flex align-items-center">
+                    
+                    @if ( checkfollowstatus(Auth()->id(),$following->user_id))
+                    <button class="btn btn-sm btn-danger unfollowbtn" data-user-id={{$following->user_id}}>UnFollow</button>
+                    @elseif ($following->user_id==Auth()->id())
+                    {{-- <button class="btn btn-sm btn-primary followbtn" data-user-id={{$f->user_id}}>Follow</button> --}}
+                    @else
+                    <button class="btn btn-sm btn-primary followbtn" data-user-id={{$following->user_id}}>Follow</button>
+                    @endif
+                    
+                    {{-- <button class="btn btn-sm btn-primary followbtn" data-user-id={{$following->id}}>Follow</button> --}}
+                    
+
+                 </div>
+             </div>
+             {{-- @endforeach  --}}
+        @endforeach
+           
+           </div>
+        </div>
+    </div>
+  </div>
+  @foreach ($userdata as $user )
     <div class="container col-9 rounded-0">
         <div class="col-12 rounded p-4 mt-4 d-flex gap-5">
             <div class="col-4 d-flex justify-content-end align-items-start">
@@ -36,8 +150,8 @@
                     <div class="d-flex gap-2 align-items-center my-3">
 
                         <a class="btn btn-sm btn-primary"><i class="bi bi-file-post-fill"></i> {{count($posts)}} Posts</a>
-                        <a class="btn btn-sm btn-primary"><i class="bi bi-people-fill"></i> {{count($followers)}} Followers</a>
-                        <a class="btn btn-sm btn-primary"><i class="bi bi-person-fill"></i> {{count($followings)}} Following</a>
+         <a class="btn btn-sm btn-primary" data-bs-toggle='modal' data-bs-target="#follower_list"><i class="bi bi-people-fill"></i> {{count($followers)}} Followers</a>
+                        <a class="btn btn-sm btn-primary" data-bs-toggle='modal' data-bs-target="#following_list"><i class="bi bi-person-fill"></i> {{count($followings)}} Following</a>
 
                       
                     </div>
@@ -50,21 +164,13 @@
                             @else
                             <button class="btn btn-sm btn-danger unfollowbtn" data-user-id={{$user->id}}>Unfollow</button>
                             @endif
-                       @endif
-
-                      
-                    
-                       
-                     
-                     
-
-
-
+                       @endif        
+                                            
                     </div>
                 </div>
             </div>
 
-            
+            @endforeach
         </div>
         <h3 class="border-bottom" style="display: flex; justify-content: center;"> All Posts</h3>
         <div class="gallery d-flex flex-wrap position-relative  gap-2 mb-4">
@@ -167,5 +273,5 @@
             </div>
         </div>
     </div>
-@endforeach
+
 @include('pages.footer')
