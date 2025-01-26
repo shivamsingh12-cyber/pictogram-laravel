@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\follower;
+use App\Models\likepost;
 use App\Models\Post;
 use App\Models\User;
 use App\Mail\sendmail;
@@ -96,7 +97,7 @@ class Controller extends BaseController
     public function dashboard()
     {
         $posts = DB::table('posts')
-        ->select('posts.*','users.id','users.first_name','users.last_name','users.profile_pic','users.username')
+        ->select('posts.id as postid','posts.*','users.id','users.first_name','users.last_name','users.profile_pic','users.username')
         ->join('users','users.id','=','posts.user_id')->orderBy('posts.id','desc')
         ->get();
 
@@ -114,7 +115,7 @@ class Controller extends BaseController
                  
         }
 
-
+            // return $listpost;
         $users=User::where('id','!=',Auth()->id())->limit(3)->get();
         
         // for follow suggestion
@@ -177,6 +178,98 @@ class Controller extends BaseController
                 'response'=>false
             ]);
         }
+       
+    }
+    public function likepost(Request $req) {
+           $current_user=Auth()->id();
+           $post_id=$req->json('post_id');
+
+           
+          $checkstatus=likepost::where([
+            ['user_id',$current_user],
+            ['post_id',$post_id]
+          ])->count();
+          
+        //   $deletelike=likepost::where([
+        //     ['user_id',$current_user],
+        //     ['post_id',$post_id]
+        //    ]);
+        //    $deletelike->delete();
+          if (!$checkstatus) {
+            $query= likepost::create([
+             'post_id'=>$post_id,
+             'user_id'=>$current_user,
+             'action'=>'like'
+            ]);
+                if ($query) {
+                    return response()->json([
+                            'response'=>true,
+                        ]);
+                }
+                    else {
+                        return response()->json([
+                            'response'=>false
+                        ]);
+                    }
+          }
+        //   if ($deletelike) {
+        //         if ($deletelike) {
+        //             return response()->json([
+        //                     'response'=>true,
+        //                 ]);
+        //         }
+        //         else {
+        //             return response()->json([
+        //                 'response'=>false
+        //             ]);
+        //         }
+        //   }
+       
+    }
+    public function unlikepost(Request $req) {
+           $current_user=Auth()->id();
+           $post_id=$req->json('post_id');
+
+           
+        //   $checkstatus=likepost::where([
+        //     ['user_id',$current_user],
+        //     ['post_id',$post_id]
+        //   ])->count();
+          
+          $deletelike=likepost::where([
+            ['user_id',$current_user],
+            ['post_id',$post_id],
+             'action'=>'unlike'
+           ]);
+           $deletelike->delete();
+        //   if (!$checkstatus) {
+        //     $query= likepost::create([
+        //      'post_id'=>$post_id,
+        //      'user_id'=>$current_user
+        //     ]);
+        //         if ($query) {
+        //             return response()->json([
+        //                     'response'=>true,
+        //                 ]);
+        //         }
+        //             else {
+        //                 return response()->json([
+        //                     'response'=>false
+        //                 ]);
+        //             }
+        //   }
+          if ($deletelike) {
+                if ($deletelike) {
+                    return response()->json([
+                            'response'=>true,
+                        ]);
+                }
+                else {
+                    return response()->json([
+                        'response'=>false
+                    ]);
+                }
+          }
        
     }
     

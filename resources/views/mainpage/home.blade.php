@@ -10,6 +10,17 @@
              {!!'<h3 class="mt-5 p-2 boder rounded shadow text-center"><i class="bi bi-hand-thumbs-down-fill"></i> Currently no posts to see! Please follow or add someone </h3>'!!}
             @endif
          @foreach ($posts as $post)
+         @php
+         if (checklikestatus($post->postid)){
+                 $like_btn_display='none';
+                 $unlike_btn_display='';
+         }
+         else {
+             $like_btn_display='';
+             $unlike_btn_display='none';
+         }
+     @endphp
+      
          <div class="card mt-4">
             <div class="card-title d-flex justify-content-between  align-items-center">
 
@@ -22,26 +33,32 @@
                     echo "<a href='/mainprofile/$post->username' class='text-decoration-none text-dark'><img src='./storage/$post->profile_pic'  height='30' class='rounded-circle border'>&nbsp;&nbsp;".$post->first_name.' '.$post->last_name.'</a>';                    
                 @endphp
                     
-                    {{-- <img src="./storage/{{$post->profile_pic}}" alt="" height="30" class="rounded-circle border">&nbsp;&nbsp;{{$post->first_name}} {{$post->last_name}} --}}
                 </div>
-                <div class="p-2">
-                    <i class="bi bi-three-dots-vertical"></i>
-                </div>
-            </div>
+                {{-- <div class="p-2">
+                    <i class="bi bi-three-dots-vertical"></i>   
+                </div> --}}
+            </div>  
             <img src="./storage/{{$post->post_img}}" class="" alt="..."  height="600">
-            <h4 style="font-size: x-larger" class="p-2 border-bottom"><i class="bi bi-heart"></i>&nbsp;&nbsp;<i
+            <h4 style="font-size: x-larger" class="p-2 border-bottom">
+                <span>
+               
+                    <i class="bi bi-heart-fill unlike_btn" style="display: {{$unlike_btn_display}}" data-post-id={{$post->postid}}></i>
+                    <i class="bi bi-heart like_btn"  style="display: {{$like_btn_display}}" data-post-id={{$post->postid}}></i>
+                </span>
+                
+                &nbsp;&nbsp;<i
                     class="bi bi-chat-left"></i>
             </h4>
             <div class="card-body">
                 {{$post->post_text}}
-
+             
             </div>
 
             <div class="input-group p-2 border-top">
                 <input type="text" class="form-control rounded-0 border-0" placeholder="say something.."
                     aria-label="Recipient's username" aria-describedby="button-addon2">
                 <button class="btn btn-outline-primary rounded-0 border-0" type="button"
-                    id="button-addon2">Post</button>
+                    id="button-addon2">Post </button>
             </div>
 
         </div>

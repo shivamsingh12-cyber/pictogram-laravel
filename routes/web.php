@@ -40,5 +40,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::get('/mainprofile/{name?}',[Controller::class,'mainprofile'])->name('main_profile')->middleware(UserStatus::class);
     Route::post('/follow/{user_id}',[Controller::class,'follow']);
     Route::any('/unfollow/{user_id}',[Controller::class,'unfollow']);
+    Route::any('/post/{post_name}',[Controller::class,'likepost']);
+    Route::any('/unpost/{post_name}',[Controller::class,'unlikepost']);
     Route::any('/logout', [Controller::class,'logout']);
 });
