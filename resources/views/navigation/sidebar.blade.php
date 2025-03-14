@@ -1,7 +1,9 @@
-{{-- <button class="menu-btn" onclick="toggleSidebar()">☰ Open Menu</button> --}}
+
 
 <!-- Sidebar Menu -->
 <div class="sidebar" id="sidebar">
+    
+   
     {{-- <h1 class="mx-3 text-white after">Notifications</h1> --}}
     {{-- <ul>
         <li><a href="#">Home</a></li>
@@ -22,3 +24,45 @@
 
 <!-- Overlay (click anywhere to close sidebar) -->
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+{{-- offcanvas --}}
+
+
+  {{-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+    Button with data-bs-target
+  </button> --}}
+  
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="message" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+      <h1 class="offcanvas-title" id="offcanvasExampleLabel">Messages</h1>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        {{-- data item --}}
+        <div class="d-flex align-items-center chat-item">
+            <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="chat-dp">
+            <div class="chat-details ms-3">
+                <div class="d-flex justify-content-between">
+                    <span class="chat-name">John Doe</span>
+                    <span class="chat-time">10:45 AM</span>
+                </div>
+                <div class="chat-message">Hey! How are you?</div>
+            </div>
+        </div>
+     {{-- data item --}}
+
+        {{-- data item --}}
+        <div class="d-flex align-items-center chat-item">
+            <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="User" class="chat-dp">
+            <div class="chat-details ms-3">
+                <div class="d-flex justify-content-between">
+                    <span class="chat-name">John Doe</span>
+                    <span class="chat-time">10:45 AM</span>
+                </div>
+                <div class="chat-message">Hey! How are you?</div>
+            </div>
+        </div>
+     {{-- data item --}}
+
+    </div>
+  </div>

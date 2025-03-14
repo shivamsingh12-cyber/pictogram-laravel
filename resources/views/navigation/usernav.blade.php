@@ -39,7 +39,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-dark" href="#"><i class="bi bi-chat-right-dots-fill"></i></a>
+                <a class="nav-link text-dark" href="#" data-bs-toggle="offcanvas" data-bs-target="#message" ><i class="bi bi-chat-right-dots-fill"></i></a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"

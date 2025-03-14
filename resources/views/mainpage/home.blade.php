@@ -46,12 +46,12 @@
                     $unlike_btn_display='none';
                 }
                 @endphp
-                    <i class="bi bi-heart-fill unlike_btn" style="display: {{$unlike_btn_display}}" data-post-id={{$post->postid}}></i>
+                    <i class="bi bi-heart-fill unlike_btn text-danger" style="display: {{$unlike_btn_display}}" data-post-id={{$post->postid}}></i>
                     <i class="bi bi-heart like_btn"  style="display: {{$like_btn_display}}" data-post-id={{$post->postid}} data-user-id="{{$post->user_id}}"></i>
                 </span>
               
                 &nbsp;&nbsp;<i
-                    class="bi bi-chat-left"></i>
+                    class="bi bi-chat-left" data-bs-toggle="modal"  data-bs-target="#postview{{$post->postid}}"></i>
             </h4>
             <div>
                 <span class="mx-2" data-bs-toggle="modal" data-bs-target="#likes{{$post->postid}}">   {!! count($likes) !!} likes</span> 
