@@ -65,7 +65,7 @@
             <div class="input-group p-2 border-top">
                 <input type="text" class="form-control rounded-0 border-0 comment-input" placeholder="say something.."
                 aria-label="Recipient's username" aria-describedby="button-addon2">
-            <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-cs="comment-section{{$post->postid}}" data-post-id="{{$post->postid}}" type="button"
+            <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-cs="comment-section{{$post->postid}}" data-post-id="{{$post->postid}}" type="button" data-user-id="{{$post->user_id}}"
                 id="button-addon2" >Post</button>
             </div>
 
@@ -127,7 +127,7 @@
                                 <input type="text" class="form-control rounded-0 border-0 comment-input" placeholder="say something.."
                                     aria-label="Recipient's username" aria-describedby="button-addon2">
                                 <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-page="wall" data-cs="comment-section{{$post->postid}}" data-post-id="{{$post->postid}}" type="button"
-                                    id="button-addon2" >Post</button>
+                                    id="button-addon2" data-user-id="{{$post->user_id}}">Post</button>
                             </div>
                         </div>
     

@@ -41,7 +41,7 @@ class NotificationController extends Controller
 
         try {
             // Update all existing notifications instead of creating new ones
-            $updated = notify::where('type', 'like')
+            $updated = notify::where('status', 1)
                              ->update(['status' => 0]);
     
             return response()->json([

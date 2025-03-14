@@ -121,6 +121,7 @@ $(".unlike_btn").click(function (){
 //for inserting comments
 $(".add-comment").click(function (){
     var post_id_v =  $(this).data('postId');
+    let getuser = $(this).data('userId');
     var btn = this;
     $(btn).attr('disabled', true);
     $(btn).siblings('.comment-input').attr('disabled',true);
@@ -135,7 +136,8 @@ $(".add-comment").click(function (){
         dataType:'json',
         data: JSON.stringify({
             post_id: post_id_v,
-            comment: comment_v
+            comment: comment_v,
+            get_user:getuser
         }),
         success: function (response) {
             console.log(response)
@@ -179,7 +181,83 @@ function load_unseen_notification(view='') {
 
 
 
-// to show notification
+
+
+$(document).ready(function(){
+  
+    shownotification();
+    setInterval(shownotification,20000);
+    $("#sidebar").mouseleave(function(){
+        $.post("/closenotify", function(response) {
+            console.log(response);
+            // $("#showdata").html(response);
+        });
+      });
+    
+})
+
+//show notification of like
+function shownotification(){
+// $(document).ready(function(){
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        url:"/notify",
+        type:"POST",
+        dataType:'json',
+        data: JSON.stringify({
+                status:1
+        }),
+        success: function (response) {
+            // console.log(response);
+            $('#sidebar').empty();
+            let count = response.total;
+            let data = response.data;
+            let curentuser= response.current_user;
+            $('#sidebar').append( "<h1 class='mx-3 text-white after'>Notifications</h1>")
+            if (response.total > 0) {
+                $("#notificationDot").removeClass("d-none"); // Show dot
+            } else {
+                $("#notificationDot").addClass("d-none"); // Hide dot
+            }
+        
+            for (let key in data) {
+                if(data[key].type=="like"){
+                      if(data[key].u_postid==curentuser){
+                       $('#sidebar').append(
+                        "<div class='container mt-4 bg-white'>"+
+       "<div class='alert alert-light border shadow-sm d-flex align-items-center p-2' role='alert'>"+
+           " <div>"+
+               " <strong>"+data[key].username +"</strong> liked your post."+
+          "</div>"+
+           " <img src='/storage/"+data[key].post_img+"' alt='Like' class='ms-auto' width='24' height='24'>"+
+       " </div>"+
+   " </div>"
+        )               }}
+        if(data[key].type=="comment"){
+                      if(data[key].u_postid==curentuser){
+                       $('#sidebar').append(
+                        "<div class='container mt-4 bg-white'>"+
+       "<div class='alert alert-light border shadow-sm d-flex align-items-center p-2' role='alert'>"+
+           " <div>"+
+               " <strong>"+data[key].username +"</strong> commented on your post."+
+          "</div>"+
+           " <img src='/storage/"+data[key].post_img+"' alt='Like' class='ms-auto' width='24' height='24'>"+
+       " </div>"+
+   " </div>"
+        )               }}
+                
+              }
+              
+         
+
+              
+        }
+    });
+}
+
+
+
+//to show notification
 // $(".bi-bell-fill").click(function (){
 //     $.ajax({
 //         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -212,59 +290,4 @@ function load_unseen_notification(view='') {
 //         }
 //     });
 // });
-
-$(document).ready(function(){
-  
-    shownotification();
-    setInterval(shownotification,10000);
-    
-})
-
-function shownotification(){
-    $.ajax({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        url:"/notify",
-        type:"POST",
-        dataType:'json',
-        data: JSON.stringify({
-                status:1
-        }),
-        success: function (response) {
-            // console.log(response);
-            $('#sidebar').empty();
-            let count = response.total;
-            let data = response.data;
-            let curentuser= response.current_user;
-            $('#sidebar').append( "<h1 class='mx-3 text-white after'>Notifications</h1>")
-            if (response.total > 0) {
-                $("#notificationDot").removeClass("d-none"); // Show dot
-            } else {
-                $("#notificationDot").addClass("d-none"); // Hide dot
-            }
-        
-            for (let key in data) {
-                      if(data[key].u_postid==curentuser){
-                       $('#sidebar').append(
-                        "<div class='container mt-4 bg-white'>"+
-       "<div class='alert alert-light border shadow-sm d-flex align-items-center p-2' role='alert'>"+
-           " <div>"+
-               " <strong>"+data[key].username +"</strong> liked your post."+
-          "</div>"+
-           " <img src='/storage/"+data[key].post_img+"' alt='Like' class='ms-auto' width='24' height='24'>"+
-       " </div>"+
-   " </div>"
-)               }
-                
-              }
-              $(".bi-bell-fill").mouseleave(function(){
-                $.post("/closenotify", function(response) {
-                    console.log(response);
-                    // $("#showdata").html(response);
-                });
-              });
-
-              
-        }
-    });
-}
    

@@ -455,15 +455,22 @@ class Controller extends BaseController
     public function addcomment(Request $req) {
         $comment= $req->json('comment');
         $post_id= $req->json('post_id');
+        $current_user=Auth()->id();
+        $getuser=$req->json('get_user');
 
-        
- 
        
         $query= Comment::create([
             'post_id'=>$post_id,
             'user_id'=>Auth()->id(),
             'comment'=>$comment
            ]);
+
+           $notification = notify::create([
+            'user_id'=> $current_user,
+            'postlike'=> $post_id,
+            'u_postid'=> $getuser,
+            'type'=>'comment'
+        ]);
  
        if ($query) {
         $cuser=getallUser(Auth()->id());
