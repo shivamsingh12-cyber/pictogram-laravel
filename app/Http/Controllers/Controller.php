@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\follower;
-use App\Models\likepost;
+use App\Models\notify;
+use DB;
+use Session;
 use App\Models\Post;
 use App\Models\User;
 use App\Mail\sendmail;
-use DB;
+use App\Models\Comment;
+use App\Models\follower;
+use App\Models\likepost;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +21,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Session;
 // use Request;
 
 class Controller extends BaseController
@@ -115,7 +118,7 @@ class Controller extends BaseController
                  
         }
 
-            // return $listpost;
+            // return $posts;
         $users=User::where('id','!=',Auth()->id())->limit(3)->get();
         
         // for follow suggestion
@@ -183,6 +186,7 @@ class Controller extends BaseController
     public function likepost(Request $req) {
            $current_user=Auth()->id();
            $post_id=$req->json('post_id');
+           $getuser=$req->json('get_user');
 
            
           $checkstatus=likepost::where([
@@ -190,17 +194,21 @@ class Controller extends BaseController
             ['post_id',$post_id]
           ])->count();
           
-        //   $deletelike=likepost::where([
-        //     ['user_id',$current_user],
-        //     ['post_id',$post_id]
-        //    ]);
-        //    $deletelike->delete();
+       
           if (!$checkstatus) {
             $query= likepost::create([
              'post_id'=>$post_id,
              'user_id'=>$current_user,
              'action'=>'like'
             ]);
+
+            $notification = notify::create([
+                'user_id'=> $current_user,
+                'postlike'=> $post_id,
+                'u_postid'=> $getuser,
+                'type'=>'like'
+            ]);
+
                 if ($query) {
                     return response()->json([
                             'response'=>true,
@@ -212,18 +220,7 @@ class Controller extends BaseController
                         ]);
                     }
           }
-        //   if ($deletelike) {
-        //         if ($deletelike) {
-        //             return response()->json([
-        //                     'response'=>true,
-        //                 ]);
-        //         }
-        //         else {
-        //             return response()->json([
-        //                 'response'=>false
-        //             ]);
-        //         }
-        //   }
+ 
        
     }
     public function unlikepost(Request $req) {
@@ -231,33 +228,14 @@ class Controller extends BaseController
            $post_id=$req->json('post_id');
 
            
-        //   $checkstatus=likepost::where([
-        //     ['user_id',$current_user],
-        //     ['post_id',$post_id]
-        //   ])->count();
+    
           
           $deletelike=likepost::where([
             ['user_id',$current_user],
             ['post_id',$post_id],
-             'action'=>'unlike'
            ]);
            $deletelike->delete();
-        //   if (!$checkstatus) {
-        //     $query= likepost::create([
-        //      'post_id'=>$post_id,
-        //      'user_id'=>$current_user
-        //     ]);
-        //         if ($query) {
-        //             return response()->json([
-        //                     'response'=>true,
-        //                 ]);
-        //         }
-        //             else {
-        //                 return response()->json([
-        //                     'response'=>false
-        //                 ]);
-        //             }
-        //   }
+    
           if ($deletelike) {
                 if ($deletelike) {
                     return response()->json([
@@ -442,30 +420,12 @@ class Controller extends BaseController
                     ['follower_id',Auth()->id()],
                     ['user_id',$data[0]['id']]
                      ])->get();
-                    //  foreach ($getfollowing as $following) {
-
-                    //      $followstatus1=follower::where([
-
-                    //          ['follower_id',Auth()->id()],
-                    //          ['user_id',$following->follower_id]
-                    //           ])->count();
-                    //  }
-                    //  return $followstatus1;
-
-                //    $getdata=array();
-                //      foreach ($getfollowers as $follower) {
-                //         $getdata[]=User::where('id',$follower['follower_id'])->join('followers','users.id','=','followers.follower_id')->get();
-                //     }
+                 
         
-                    
-                        //  $getdata=DB::table('users')
-                        //  ->select('users.*','followers.follower_id')
-                        //  ->join('followers','users.id','=','followers.user_id')->where('followers.follower_id',Auth()->id())->get();
-                    // //  return $getdata;
+                   
                      $getdata=array();
                      foreach($getfollowers as $follower){
-                        // $getdata=User::where('id',$follower['follower_id'])->get();
-                        // $getdata[]=User::where('id',$follower['follower_id'])->join('followers','users.id','=','followers.follower_id')->get();
+                    
                         
                          $getdata=DB::table('users')
                          ->select('users.*','followers.follower_id','followers.user_id')
@@ -490,6 +450,45 @@ class Controller extends BaseController
             else
             return view('mainpage.nouser',['page_title' => 'Pictogram - No User']);
     }
+
+    //add comments in post
+    public function addcomment(Request $req) {
+        $comment= $req->json('comment');
+        $post_id= $req->json('post_id');
+
+        
+ 
+       
+        $query= Comment::create([
+            'post_id'=>$post_id,
+            'user_id'=>Auth()->id(),
+            'comment'=>$comment
+           ]);
+ 
+       if ($query) {
+        $cuser=getallUser(Auth()->id());
+                 return response()->json([
+                         'response'=>true,
+                         'comments'=>'<div class="d-flex align-items-center p-2">
+                                <div><img src="/storage/'.$cuser['profile_pic'].'" alt="" height="40" class="rounded-circle border">
+                                </div>
+                                <div>&nbsp;&nbsp;&nbsp;</div>
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <h6 style="margin: 0px;"><a href="/mainprofile/'.$cuser['username'].'" class="text-decoration-none text-dark">@'.$cuser['username'].'</a></h6>
+                                    <p style="margin:0px;" class="text-muted">'.$comment.'</p>
+                                </div>
+                            </div>',
+                     ]);
+             
+                    }
+      else {
+    return response()->json([
+                            'response'=>false,
+                        ]);
+                    }
+    
+ }
+
  
     public function logout()
     {

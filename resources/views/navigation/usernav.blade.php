@@ -23,8 +23,20 @@
             <li class="nav-item">
                 <a class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#addposts"  href="#"><i class="bi bi-plus-square-fill"></i></a>
             </li>
+            {{-- <li class="nav-item">
+                <a class="nav-link text-dark" href="#"><i class="bi bi-bell-fill" onclick="toggleSidebar()"></i></a>
+            </li> --}}
             <li class="nav-item">
-                <a class="nav-link text-dark" href="#"><i class="bi bi-bell-fill"></i></a>
+                <a class="nav-link text-dark position-relative" href="#" onclick="toggleSidebar()">
+                    <i class="bi bi-bell-fill"></i>
+                    <!-- Notification Dot -->
+                    <span id="notificationDot" 
+                          class="position-absolute top-1 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none"
+                        >
+                        {{-- style="display: none;" --}}
+                        {{-- <span class="visually-hidden">New alerts</span>     --}}
+                    </span>
+                </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark" href="#"><i class="bi bi-chat-right-dots-fill"></i></a>
@@ -33,7 +45,7 @@
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     @php
-                        if (!isset(Auth()->user()->profile_pic)) {
+                        if (empty(Auth()->user()->profile_pic)) {
                             echo '<img src="/img/default_pic.jpg" alt="" height="30" class="rounded-circle border">';
                         }
                         else{

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use App\Http\Middleware\UserStatus;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
@@ -42,5 +43,8 @@ Route::group(['middleware'=>'auth'],function(){
     Route::any('/unfollow/{user_id}',[Controller::class,'unfollow']);
     Route::any('/post/{post_name}',[Controller::class,'likepost']);
     Route::any('/unpost/{post_name}',[Controller::class,'unlikepost']);
+    Route::any('/notify',[NotificationController::class,'shownotification']);
+    Route::post('/closenotify',[NotificationController::class,'closenotification']);
+    Route::any('/addcomment/{comment}/pid/{pid}',[Controller::class,'addcomment']);
     Route::any('/logout', [Controller::class,'logout']);
 });

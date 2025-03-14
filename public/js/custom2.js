@@ -1,3 +1,5 @@
+// const { functions } = require("lodash");
+
 $(".followbtn").click(function (){
     let user_id_v = $(this).data('userId');
     let btn = this;
@@ -54,6 +56,7 @@ $(".like_btn").click(function (){
    
     // let user_id_v = $(btn).data('userId');
     let post_id_v =  $(this).data('postId');
+    let getuser = $(this).data('userId');
     let btn = this;
     $(btn).attr('disabled', true);
     $.ajax({
@@ -62,7 +65,8 @@ $(".like_btn").click(function (){
         type:"POST",
         dataType:'json',
         data: JSON.stringify({
-            post_id: post_id_v
+            post_id: post_id_v,
+            get_user:getuser
         }),
         success: function (response) {
             console.log(response)
@@ -71,7 +75,7 @@ $(".like_btn").click(function (){
                 $(btn).attr('disabled', false);
                 $(btn).hide()
                 $(btn).siblings('.unlike_btn').show();
-                return;
+                location.reload();
             }
             else
             {
@@ -103,7 +107,7 @@ $(".unlike_btn").click(function (){
                 $(btn).attr('disabled', false);
                 $(btn).hide()
                 $(btn).siblings('.like_btn').show();
-                return;
+                location.reload();
             }
             else
             {
@@ -113,3 +117,154 @@ $(".unlike_btn").click(function (){
         }
     });
 });
+
+//for inserting comments
+$(".add-comment").click(function (){
+    var post_id_v =  $(this).data('postId');
+    var btn = this;
+    $(btn).attr('disabled', true);
+    $(btn).siblings('.comment-input').attr('disabled',true);
+    var comment_v =  $(btn).siblings('.comment-input').val()
+    var cs = $(this).data('cs');
+    var page = $(this).data('page');
+    // $('#'+cs).append('');
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        url:"/addcomment/{comment}/pid/{pid}",
+        type:"POST",
+        dataType:'json',
+        data: JSON.stringify({
+            post_id: post_id_v,
+            comment: comment_v
+        }),
+        success: function (response) {
+            console.log(response)
+            if (response.response) {
+                $(btn).attr('disabled', false);
+    $(btn).siblings('.comment-input').attr('disabled',false);
+    $(btn).siblings('.comment-input').val('');
+    $('#'+cs).append(response.comments);
+    $('.nce').hide();
+    if (page='wall') {
+        location.reload();
+    }
+            }
+            else
+            {
+                $(btn).attr('disabled', false);
+    $(btn).siblings('.comment-input').attr('disabled',false);
+
+                alert('Something is wrong, try after some time!')
+            }
+        }
+    });
+});
+
+function load_unseen_notification(view='') {
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        url:"/addcomment/{comment}/pid/{pid}",
+        type:"POST",
+        dataType:'json',
+        data: JSON.stringify({
+         view:view
+        }),
+        success: function (response) {
+
+        }
+    })
+}
+
+
+
+
+
+// to show notification
+// $(".bi-bell-fill").click(function (){
+//     $.ajax({
+//         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+//         url:"/notify",
+//         type:"POST",
+//         dataType:'json',
+//         data: JSON.stringify({
+//                 status:1
+//         }),
+//         success: function (response) {
+//             // console.log(response);
+//             let count = response.total;
+//             let data = response.data;
+//             let curentuser= response.current_user;
+
+//             for (let key in data) {
+//                       if(data[key].u_postid==curentuser){
+//                        $('#sidebar').append(
+//                         "<div class='container mt-4 bg-white'>"+
+//        "<div class='alert alert-light border shadow-sm d-flex align-items-center p-2' role='alert'>"+
+//            " <div>"+
+//                " <strong>"+data[key].username +"</strong> liked your post."+
+//           "</div>"+
+//            " <img src='/storage/"+data[key].post_img+"' alt='Like' class='ms-auto' width='24' height='24'>"+
+//        " </div>"+
+//    " </div>"
+// )               }
+                
+//               }
+//         }
+//     });
+// });
+
+$(document).ready(function(){
+  
+    shownotification();
+    setInterval(shownotification,10000);
+    
+})
+
+function shownotification(){
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        url:"/notify",
+        type:"POST",
+        dataType:'json',
+        data: JSON.stringify({
+                status:1
+        }),
+        success: function (response) {
+            // console.log(response);
+            $('#sidebar').empty();
+            let count = response.total;
+            let data = response.data;
+            let curentuser= response.current_user;
+            $('#sidebar').append( "<h1 class='mx-3 text-white after'>Notifications</h1>")
+            if (response.total > 0) {
+                $("#notificationDot").removeClass("d-none"); // Show dot
+            } else {
+                $("#notificationDot").addClass("d-none"); // Hide dot
+            }
+        
+            for (let key in data) {
+                      if(data[key].u_postid==curentuser){
+                       $('#sidebar').append(
+                        "<div class='container mt-4 bg-white'>"+
+       "<div class='alert alert-light border shadow-sm d-flex align-items-center p-2' role='alert'>"+
+           " <div>"+
+               " <strong>"+data[key].username +"</strong> liked your post."+
+          "</div>"+
+           " <img src='/storage/"+data[key].post_img+"' alt='Like' class='ms-auto' width='24' height='24'>"+
+       " </div>"+
+   " </div>"
+)               }
+                
+              }
+              $(".bi-bell-fill").mouseleave(function(){
+                $.post("/closenotify", function(response) {
+                    console.log(response);
+                    // $("#showdata").html(response);
+                });
+              });
+
+              
+        }
+    });
+}
+   

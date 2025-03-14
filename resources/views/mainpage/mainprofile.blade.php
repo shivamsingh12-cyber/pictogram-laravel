@@ -170,7 +170,7 @@
                 </div>
             </div>
 
-            @endforeach
+        
         </div>
         <h3 class="border-bottom" style="display: flex; justify-content: center;"> All Posts</h3>
         <div class="gallery d-flex flex-wrap position-relative  gap-2 mb-4">
@@ -178,90 +178,63 @@
                 {!!"<h1 class='mt-5 p-2 boder rounded shadow text-center position-absolute top-0 start-50 translate-middle-x'>Nothing to see here </h1>" !!}
             @endif
                 @foreach ($posts as $post )
-                <img src="/storage/{{$post->post_img}}" width="300px" class="rounded" />
-                           
-                @endforeach
-            </div>
-            
-            
-            
-            
-        </div>
-        
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Launch demo modal
-        </button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <img src="/storage/{{$post->post_img}}" data-bs-toggle="modal" data-bs-target="#postview{{$post->id}}" width="300px" class="rounded" />
+                           <!-- Modal -->
+    <div class="modal fade" id="postview{{$post->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
 
                 <div class="modal-body d-flex p-0">
                     <div class="col-8">
-                        <img src="img/post2.jpg" class="w-100 rounded-start">
+                        <img src="/storage/{{$post->post_img}}" class="w-100 rounded-start">
                     </div>
 
 
 
                     <div class="col-4 d-flex flex-column">
                         <div class="d-flex align-items-center p-2 border-bottom">
-                            <div><img src="./img/profile.jpg" alt="" height="50" class="rounded-circle border">
+                            <div><img src="/storage/{{$user->profile_pic}}" alt="" height="50" class="rounded-circle border">
                             </div>
                             <div>&nbsp;&nbsp;&nbsp;</div>
                             <div class="d-flex flex-column justify-content-start align-items-center">
-                                <h6 style="margin: 0px;">Monu Giri</h6>
-                                <p style="margin:0px;" class="text-muted">@oyeitsmg</p>
+                                <h6 style="margin: 0px;">{{$user->first_name}} {{$user->last_name}}</h6>
+                                <p style="margin:0px;" class="text-muted">{{'@'.$user->username}}</p>
                             </div>
                         </div>
-                        <div class="flex-fill align-self-stretch overflow-auto" style="height: 100px;">
+                        <div class="flex-fill align-self-stretch overflow-auto" id="comment-section{{$post->id}}" style="height: 100px;">        
+                            
+                            @php
+                                $comments=getallcomments($post->id);
+                                if (count($comments)<1) {
+                                    echo "<p class='text-center my-3 nce'>there is no comments!!</p>";
+                                }
+                            @endphp
+                                @foreach ($comments as $comment)
+                                   @php
+                                       $cuser=getallUser($comment['user_id']);
+                                   @endphp 
+                               
+                                <div class="d-flex align-items-center p-2">
+                                <div>
+                                    @if (empty($cuser['profile_pic']))
 
-                            <div class="d-flex align-items-center p-2">
-                                <div><img src="./img/profile2.jpg" alt="" height="40" class="rounded-circle border">
+                                        <img src="/img/default_pic.jpg" alt="" height="40" class="rounded-circle border">
+                                            @else
+                                        <img src="/storage/{{$cuser['profile_pic']}}" alt="" height="40" class="rounded-circle border">
+                                        @endif
                                 </div>
                                 <div>&nbsp;&nbsp;&nbsp;</div>
                                 <div class="d-flex flex-column justify-content-start align-items-start">
-                                    <h6 style="margin: 0px;">@osilva</h6>
-                                    <p style="margin:0px;" class="text-muted">its nice pic very good</p>
+                                    <h6 style="margin: 0px;"><a href="/mainprofile/{{$cuser['username']}}" class="text-decoration-none text-dark">{{'@'.$cuser['username']}}</a></h6>
+                                    <p style="margin:0px;" class="text-muted">{{$comment['comment']}}</p>
                                 </div>
                             </div>
-
-                            <div class="d-flex align-items-center p-2">
-                                <div><img src="./img/profile2.jpg" alt="" height="40" class="rounded-circle border">
-                                </div>
-                                <div>&nbsp;&nbsp;&nbsp;</div>
-                                <div class="d-flex flex-column justify-content-start align-items-start">
-                                    <h6 style="margin: 0px;">@osilva</h6>
-                                    <p style="margin:0px;" class="text-muted">its nice pic very good</p>
-                                </div>
-                            </div>
-
-                            <div class="d-flex align-items-center p-2">
-                                <div><img src="./img/profile2.jpg" alt="" height="40" class="rounded-circle border">
-                                </div>
-                                <div>&nbsp;&nbsp;&nbsp;</div>
-                                <div class="d-flex flex-column justify-content-start align-items-start">
-                                    <h6 style="margin: 0px;">@osilva</h6>
-                                    <p style="margin:0px;" class="text-muted">its nice pic very good</p>
-                                </div>
-                            </div>
-
-                            <div class="d-flex align-items-center p-2">
-                                <div><img src="./img/profile2.jpg" alt="" height="40" class="rounded-circle border">
-                                </div>
-                                <div>&nbsp;&nbsp;&nbsp;</div>
-                                <div class="d-flex flex-column justify-content-start align-items-start">
-                                    <h6 style="margin: 0px;">@osilva</h6>
-                                    <p style="margin:0px;" class="text-muted">its nice pic very good</p>
-                                </div>
-                            </div>
-
+                            @endforeach
                         </div>
                         <div class="input-group p-2 border-top">
-                            <input type="text" class="form-control rounded-0 border-0" placeholder="say something.."
+                            <input type="text" class="form-control rounded-0 border-0 comment-input" placeholder="say something.."
                                 aria-label="Recipient's username" aria-describedby="button-addon2">
-                            <button class="btn btn-outline-primary rounded-0 border-0 " type="button"
+                            <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-cs="comment-section{{$post->id}}" data-post-id="{{$post->id}}" type="button"
                                 id="button-addon2" >Post</button>
                         </div>
                     </div>
@@ -273,5 +246,16 @@
             </div>
         </div>
     </div>
+                @endforeach
+            </div>
+            
+            
+            
+            
+        </div>
+        
+     
+        @endforeach
+    
 
 @include('pages.footer')

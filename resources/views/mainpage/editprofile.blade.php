@@ -14,7 +14,7 @@
                 <div class="form-floating mt-1 col-6">
                     {{-- <img src="/storage/{{Auth::user()->profile_pic}}" class="img-thumbnail my-3" style="height:150px;" alt="face image" > --}}
                     @php
-                    if (!isset(Auth()->user()->profile_pic)) {
+                    if (empty(Auth()->user()->profile_pic)) {
                         echo '<img src="/img/default_pic.jpg" alt="" height="30" style="height:150px; class="img-thumbnail my-3">';
                     }
                     else{
