@@ -37,9 +37,9 @@
       <h1 class="offcanvas-title" id="offcanvasExampleLabel">Messages</h1>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body">
+    <div class="offcanvas-body" id="chatlist">
         {{-- data item --}}
-        <div class="d-flex align-items-center chat-item">
+        {{-- <div class="d-flex align-items-center chat-item">
             <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="chat-dp">
             <div class="chat-details ms-3">
                 <div class="d-flex justify-content-between">
@@ -48,11 +48,11 @@
                 </div>
                 <div class="chat-message">Hey! How are you?</div>
             </div>
-        </div>
+        </div> --}}
      {{-- data item --}}
 
         {{-- data item --}}
-        <div class="d-flex align-items-center chat-item">
+        {{-- <div class="d-flex align-items-center chat-item">
             <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="User" class="chat-dp">
             <div class="chat-details ms-3">
                 <div class="d-flex justify-content-between">
@@ -61,7 +61,7 @@
                 </div>
                 <div class="chat-message">Hey! How are you?</div>
             </div>
-        </div>
+        </div> --}}
      {{-- data item --}}
 
     </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\chat;
+use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -79,4 +80,46 @@ class ChattingController extends Controller
             ], 500);
         }
     }
+    public function getuser($id) {
+
+        try {
+        $getuser= User::find($id);
+        return $getuser;
+           
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getchats() {
+
+        try {
+                $chats= $this->getAllMessages();
+                $chatlist  = "";
+                foreach ($chats as  $chat) {
+                    $ch_user = $this->getuser($chat['user_id']);
+                    $chatlist.='<div class="d-flex align-items-center chat-item" data-bs-toggle="modal" data-bs-target="#chatting">
+            <img src="/storage/'.$ch_user['profile_pic'].' " alt="User" class="chat-dp">
+            <div class="chat-details ms-3">
+                <div class="d-flex justify-content-between">
+                    <span class="chat-name">'.$ch_user['first_name'].' '.$ch_user['last_name'].'</span>
+                    <span class="chat-time">'.getTimeAgo($chat['messages'][0]['created_at']).'</span>
+                </div>
+                <div class="chat-message">'.$chat['messages'][0]['msg'].'</div>
+            </div>
+        </div>'; 
+    }
+    return response()->json($chatlist);
+           
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    
 }

@@ -47,7 +47,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::any('/notify',[NotificationController::class,'shownotification']);
     Route::post('/closenotify',[NotificationController::class,'closenotification']);
     Route::any('/addcomment/{comment}/pid/{pid}',[Controller::class,'addcomment']);
-    Route::any('/checkmessage',[ChattingController::class,'getAllMessages']);
+    Route::any('/checkmessage',[ChattingController::class,'getchats']);
     // Route::any('/checkmessage2/{id}',[ChattingController::class,'getMessages']);
     Route::any('/logout', [Controller::class,'logout']);
 });

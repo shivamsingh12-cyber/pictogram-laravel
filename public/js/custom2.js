@@ -251,6 +251,27 @@ function shownotification(){
     });
 }
 
+function syncMsg(){
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        url:"/checkmessage",
+        type:"POST",
+        dataType:'json',
+        // data: JSON.stringify({
+        //         status:1
+        // }),
+        success: function (response) {
+            console.log(response);
+            $('#chatlist').html(response);
+        }
+    })
+}
+syncMsg();
+
+setInterval(()=>{
+    syncMsg();
+},1000)
+
 
 
 
