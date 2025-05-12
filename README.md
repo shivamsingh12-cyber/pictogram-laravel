@@ -1,3 +1,4 @@
+# Pictogram
 Steps to install 
 It is mandatory to import this mysql file in wampserver not in xammp
 1. download this as zip folder
