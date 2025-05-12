@@ -186,7 +186,9 @@ function load_unseen_notification(view='') {
 $(document).ready(function(){
  
     shownotification();
-    setInterval(shownotification,20000);
+    syncMsg();
+    setInterval(shownotification,10000);
+    setInterval(syncMsg,5000);
     $("#sidebar").mouseleave(function(){
         $.post("/closenotify", function(response) {
             console.log(response);
@@ -251,26 +253,102 @@ function shownotification(){
     });
 }
 
+var chatting_user_id = 5;
+
+$('.chatlist_item').click();
+
+function popchat(user_id){
+    $('#user_chat').html(`<div class="spinner-grow text-danger" role="status">
+  
+</div>`);
+    $('#chatter_username').text('loading...');
+    $('#chatter_pic').attr('src', '/storage/profile/wolf.jpg');
+     chatting_user_id = user_id;
+     $('#sendmsg').attr('data-user-id', user_id);
+ }
+
+ $("#sendmsg").click(function (){
+    var user_id = chatting_user_id;
+    var msg = $("#msginput").val();
+  if (!msg) return;
+
+  $("#sendmsg").attr('disabled', true);
+  $("#msginput").attr('disabled', true);
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url:"/sendmessage",
+        type:"POST",
+        dataType:'json',
+        contentType: 'application/json', 
+        data: JSON.stringify({
+            user_id: user_id,
+            msg: msg
+        }),
+        success: function (response) {
+          if (response) {
+            $("#sendmsg").attr('disabled', false);
+            $("#msginput").attr('disabled', false);
+            $("#msginput").val(''); 
+          }
+          else{
+            alert('Something is wrong, try after some time');
+          }
+
+        }
+    })
+
+
+ });
+
 function syncMsg(){
     $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         url:"/checkmessage",
         type:"POST",
         dataType:'json',
-        // data: JSON.stringify({
-        //         status:1
-        // }),
+        data: JSON.stringify({
+                chatter_id:chatting_user_id
+        }),
         success: function (response) {
             console.log(response);
-            $('#chatlist').html(response);
+            $('#chatlist').html(response.chatlist);
+            if (chatting_user_id!=0) {
+                $('#user_chat').html(response.chat.msgs);
+                $('#chatter_username').text('@'+response.chat.userdata.username);
+                $('#chatter_pic').attr('src', '/storage/'+response.chat.userdata.profile_pic);
+            }
+
         }
     })
 }
-syncMsg();
 
-setInterval(()=>{
-    syncMsg();
-},1000)
+$(document).ready(function(){
+ 
+ $("#search").on('keyup',function(){
+     let search = $(this).val();
+     console.log(search);
+     if (search != '') {
+         $.ajax({
+             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+             url:"/searchuser/"+{search},
+             type:"GET",
+             data: { srch: search },
+             success: function (response) {
+                 $('#searchresult').html(response);
+                // console.log(response)
+             }
+         });
+     }
+      })
+    
+})
+
+
+
+
+
 
 
 

@@ -139,8 +139,8 @@
                             <span class="" style="font-size:xx-large" type="button" id="dropdownMenuButton1"
                                 data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots"></i> </span>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-chat-fill"></i> Message</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-x-circle-fill"></i> Block</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#chatting" onclick="popchat({{$user->id}})"><i class="bi bi-chat-fill"></i> Message</a></li>
+                                {{-- <li><a class="dropdown-item" href="#"><i class="bi bi-x-circle-fill"></i> Block</a></li> --}}
                             </ul>
                         </div>
                         @endif

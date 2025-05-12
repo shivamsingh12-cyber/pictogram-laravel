@@ -1,77 +1,49 @@
-
 @include('pages.header')
 @include('navigation.usernav')
 @include('navigation.sidebar')
-@if(session()->has('success'))
-<div class="alert alert-success">{{session()->get('success')}}</div>
-@endif
 
-    <div class="container col-9 rounded-0 d-flex justify-content-between">
-        <div class="col-8">
-            @if (count($posts)<1)
-             {!!'<h3 class="mt-5 p-2 boder rounded shadow text-center"><i class="bi bi-hand-thumbs-down-fill"></i> Currently no posts to see! Please follow or add someone </h3>'!!}
-            @endif
-         @foreach ($posts as $post)
-    
-      
-         <div class="card mt-4">
-            <div class="card-title d-flex justify-content-between  align-items-center">
+<div class="container mt-4">
+    @if(session()->has('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if(session()->has('original_admin'))
+        <a href="{{ route('revert.admin') }}" class="btn btn-warning mb-3">Switch Back to Admin</a>
+    @endif
 
-                <div class="d-flex align-items-center p-2">
-                    @php
-                    if (empty($post->profile_pic)) {
-                        echo '<a href="/mainprofile/'.$post->username.'" class="text-decoration-none text-dark"><img src="/img/default_pic.jpg" alt="" height="30" class="rounded-circle border">&nbsp;&nbsp;'.$post->first_name.' '.$post->last_name.'</a>';
-                    }
-                    else
-                    echo "<a href='/mainprofile/$post->username' class='text-decoration-none text-dark'><img src='./storage/$post->profile_pic'  height='30' class='rounded-circle border'>&nbsp;&nbsp;".$post->first_name.' '.$post->last_name.'</a>';                    
-                @endphp
-                    
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            @if (empty($posts))
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-hand-thumbs-down-fill"></i> No posts available! Follow or add friends to see content.
                 </div>
-                {{-- <div class="p-2">
-                    <i class="bi bi-three-dots-vertical"></i>   
-                </div> --}}
-            </div>  
-            <img src="./storage/{{$post->post_img}}" class="" alt="..."  height="600">
-            <h4 style="font-size: x-larger" class="p-2 border-bottom">
-                <span>
-                @php
-                $likes=getlikecount($post->postid);
-                $comm=getallcomments($post->postid);
-                if (checklikestatus($post->postid)){
-                        $like_btn_display='none';
-                        $unlike_btn_display='';
-                }
-                else {
-                    $like_btn_display='';
-                    $unlike_btn_display='none';
-                }
-                @endphp
-                    <i class="bi bi-heart-fill unlike_btn text-danger" style="display: {{$unlike_btn_display}}" data-post-id={{$post->postid}}></i>
-                    <i class="bi bi-heart like_btn"  style="display: {{$like_btn_display}}" data-post-id={{$post->postid}} data-user-id="{{$post->user_id}}"></i>
-                </span>
-              
-                &nbsp;&nbsp;<i
-                    class="bi bi-chat-left" data-bs-toggle="modal"  data-bs-target="#postview{{$post->postid}}"></i>
-            </h4>
-            <div>
-                <span class="mx-2" data-bs-toggle="modal" data-bs-target="#likes{{$post->postid}}">   {!! count($likes) !!} likes</span> 
-                <span class="mx-2" data-bs-toggle="modal"  data-bs-target="#postview{{$post->postid}}">   {!! count($comm) !!} comments</span> 
-            </div>
-            <div class="card-body">
-                {{$post->post_text}}
-             
-            </div>
+            @endif
 
-            <div class="input-group p-2 border-top">
-                <input type="text" class="form-control rounded-0 border-0 comment-input" placeholder="say something.."
-                aria-label="Recipient's username" aria-describedby="button-addon2">
-            <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-cs="comment-section{{$post->postid}}" data-post-id="{{$post->postid}}" type="button" data-user-id="{{$post->user_id}}"
-                id="button-addon2" >Post</button>
-            </div>
-
-        </div>
-
-        {{-- commentsofpeople --}}
+            @foreach ($posts as $post)
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex align-items-center">
+                        <a href="/mainprofile/{{ $post->username }}" class="d-flex align-items-center text-dark text-decoration-none">
+                            <img src="{{ empty($post->profile_pic) ? '/img/default_pic.jpg' : '/storage/'.$post->profile_pic }}" class="rounded-circle border me-2" height="40">
+                            <strong>{{ $post->first_name }} {{ $post->last_name }}</strong>
+                        </a>
+                    </div>
+                    <img src="/storage/{{ $post->post_img }}" class="img-fluid">
+                    <div class="card-body">
+                        <p class="mb-2">{{ $post->post_text }}</p>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-heart-fill text-danger unlike_btn me-2" style="display: {{ checklikestatus($post->postid) ? 'inline' : 'none' }}" data-post-id="{{ $post->postid }}"></i>
+                            <i class="bi bi-heart like_btn me-2" style="display: {{ checklikestatus($post->postid) ? 'none' : 'inline' }}" data-post-id="{{ $post->postid }}" data-user-id="{{ $post->user_id }}"></i>
+                            <span class="me-3" data-bs-toggle="modal" data-bs-target="#likes{{ $post->postid }}">{{ count(getlikecount($post->postid)) }} likes</span>
+                            <i class="bi bi-chat-left me-2" data-bs-toggle="modal" data-bs-target="#postview{{ $post->postid }}"></i>
+                            <span data-bs-toggle="modal" data-bs-target="#postview{{ $post->postid }}">{{ count(getallcomments($post->postid)) }} comments</span>
+                        </div>
+                    </div>
+                    <div class="input-group p-2 border-top">
+                        <input type="text" class="form-control rounded-0 border-0 comment-input" placeholder="Say something..">
+                        <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-post-id="{{ $post->postid }}" data-user-id="{{ $post->user_id }}">Post</button>
+                    </div>
+                </div>
+                      {{-- commentsofpeople --}}
         <div class="modal fade" id="postview{{$post->postid}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-centered">
                 <div class="modal-content">
@@ -138,125 +110,44 @@
                 </div>
             </div>
         </div>
-
-   
-        {{-- likescountofpeople --}}
-        <div class="modal fade" id="likes{{$post->postid}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Likes</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        {{-- @if (empty($post->id))
-                        {{'No Followings!'}}
-                    @endif  --}}
-                        @if (count($likes)<1)
-                            {{'No likes'}}
-                        @endif
-                
-                     @foreach ($likes as  $u)
-                    @php
-                        $allusers=getallUser($u['user_id']);
-                    @endphp
-                  
-                         {{-- @php
-                             dd($u->profile_pic);
-                         @endphp --}}
-                     <div class="d-flex justify-content-between">
-                         <div class="d-flex align-items-center p-2">
-                             @if (!empty($allusers['profile_pic']))
-                             <div><img src="/storage/{{$allusers['profile_pic']}}" alt="" height="40" class="rounded-circle border">   
-                             @else
-                                 <div><img src="/img/default_pic.jpg" alt="" height="40" class="rounded-circle border">
-                             @endif
-                             </div>
-                             <div>&nbsp;&nbsp;</div>
-                             <div class="d-flex flex-column justify-content-center">
-                               <a href="/mainprofile/{{$allusers['username']}}" class="text-decoration-none text-dark">  <h6 style="margin: 0px;font-size: small;">{{$allusers['first_name']}} {{$allusers['last_name']}}</h6> </a> 
-                                 <p style="margin:0px;font-size:small" class="text-muted">{{'@'.$allusers['username']}}</p>
-                             </div>
-                         </div>
-                         <div class="d-flex align-items-center">
-                            
-                            @if ( checkfollowstatus(Auth()->id(),$u['user_id']))
-                            <button class="btn btn-sm btn-danger unfollowbtn" data-user-id={{$allusers['id']}}>UnFollow</button>
-                            @elseif ($u['user_id']==Auth()->id())
-                            {{-- <button class="btn btn-sm btn-primary followbtn" data-user-id={{$f->user_id}}>Follow</button> --}}
-                            @else
-                            <button class="btn btn-sm btn-primary followbtn" data-user-id={{$allusers['id']}}>Follow</button>
-                            @endif
-                            
-                            {{-- <button class="btn btn-sm btn-primary followbtn" data-user-id={{$following->id}}>Follow</button> --}}
-                            
-        
-                         </div>
-                     </div>
-          
-                @endforeach
-                   
-                   </div>
-                </div>
-            </div>
-          </div>
-         @endforeach
-          
-        
-
+            @endforeach
         </div>
 
-        <div class="col-4 mt-4 p-3">
-            <div class="d-flex align-items-center p-2">
-                <div>
-                    {{-- <img src="/storage/{{Auth::user()->profile_pic}}" alt="" height="60" class="rounded-circle border"> --}}
-                    @php
-                    if (empty(Auth()->user()->profile_pic)) {
-                        echo '<img src="/img/default_pic.jpg" alt="" height="60" class="rounded-circle border">';
-                    }
-                    else{
-
-                    //    echo "<img src='/storage/".{{Auth::user()->profile_pic}}'  height='30' class='rounded-circle border'>";
-                       echo '<img src="/storage/'.Auth()->user()->profile_pic.'" alt="" height="60" class="rounded-circle border">';
-                    }
-                @endphp
-                </div>
-                <div>&nbsp;&nbsp;&nbsp;</div>
-                <div class="d-flex flex-column justify-content-center align-items-center">
-                   <a href="/mainprofile/{{Auth::user()->username}}" class="text-decoration-none text-dark"> <h6 style="margin: 0px;">{{Auth::user()->first_name}} {{Auth::user()->last_name}}</h6> </a> 
-                    <p style="margin:0px;" class="text-muted"><span>@</span>{{Auth::user()->username}}</p>
+        <!-- Sidebar - User Info & Suggestions -->
+        <div class="col-lg-4">
+            <div class="card p-3 shadow-sm mb-4">
+                <div class="d-flex align-items-center">
+                    <img src="{{ empty(Auth()->user()->profile_pic) ? '/img/default_pic.jpg' : '/storage/'.Auth()->user()->profile_pic }}" class="rounded-circle border me-3" height="60">
+                    <div>
+                        <a href="/mainprofile/{{ Auth::user()->username }}" class="text-dark text-decoration-none">
+                            <strong>{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</strong>
+                        </a>
+                        <p class="text-muted m-0">{{'@'. Auth::user()->username }}</p>
+                    </div>
                 </div>
             </div>
-            <div>
-                <h6 class="text-muted p-2">You Can Follow Them</h6>
-                @foreach ($users as $user)   
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center p-2">
-                        @if (empty($user->profile_pic))
-                          <div><img src="/img/default_pic.jpg" alt="" height="40" class="rounded-circle border">
-                         @else
-                            <div><img src="/storage/{{$user->profile_pic}}" alt="" height="40" class="rounded-circle border">   
-                        @endif
+            <div class="card p-3 shadow-sm">
+                <h6 class="text-muted">You May Follow</h6>
+                @foreach ($users as $user)
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ empty($user->profile_pic) ? '/img/default_pic.jpg' : '/storage/'.$user->profile_pic }}" class="rounded-circle border me-2" height="40">
+                            <div>
+                                <a href="/mainprofile/{{ $user->username }}" class="text-dark text-decoration-none">
+                                    <strong>{{ $user->first_name }} {{ $user->last_name }}</strong>
+                                </a>
+                                <p class="text-muted m-0">{{'@'.$user->username }}</p>
+                            </div>
                         </div>
-                        <div>&nbsp;&nbsp;</div>
-                        <div class="d-flex flex-column justify-content-center">
-                          <a href="/mainprofile/{{$user->username}}" class="text-decoration-none text-dark">  <h6 style="margin: 0px;font-size: small;">{{$user->first_name}} {{$user->last_name}}</h6> </a> 
-                            <p style="margin:0px;font-size:small" class="text-muted">{{'@'.$user->username}}</p>
-                        </div>
+                        <button class="btn btn-sm btn-primary followbtn" data-user-id="{{ $user->id }}">Follow</button>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-sm btn-primary followbtn" data-user-id="{{$user->id}}">Follow</button>
-
-                    </div>
-                </div>
                 @endforeach
-                @if (count($users)<1)
-                    {!!'<p class="p-2 boder rounded shadow text-center">No suggestions for you! </p>'!!}
+                @if (empty($users))
+                    <p class="text-center text-muted">No suggestions available.</p>
                 @endif
-         
-
-
             </div>
         </div>
     </div>
-    @include('pages.footer')
+</div>
+
+@include('pages.footer')

@@ -70,7 +70,12 @@ class Controller extends BaseController
             $fieldType = filter_var($req->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
        
             if (Auth::attempt(array($fieldType => $req['email'], 'password' => $req['password']))) {
+             
                 // $_SESSION['user']=Auth::user();
+                if (Auth::check() && Auth::user()->ac_status==2) {
+                  
+                return view('blocked',['page_title' => 'Block Page']);
+                }
                 if (Auth::check() && Auth::user()->ac_status==0) {
                     $to=Auth::user()->email;
                     $userid=Auth::user()->id;
@@ -99,6 +104,51 @@ class Controller extends BaseController
 
     public function dashboard()
     {
+        $posts = DB::table('posts')
+        ->select('posts.id as postid','posts.*','users.id','users.first_name','users.last_name','users.profile_pic','users.username')
+        ->join('users','users.id','=','posts.user_id')->orderBy('posts.id','desc')
+        ->get();
+
+        $listpost=array();
+        foreach ($posts as $post) {
+            // return $post;
+            $followquery=follower::where([
+                ['follower_id',Auth()->id()],
+                ['user_id',$post->user_id]
+                 ])->get();
+                    if ($followquery->count() || $post->user_id==Auth()->id()) {
+                             $listpost[]= $post;
+                           
+                    }
+                 
+        }
+
+            // return $posts;
+        $users=User::where('id','!=',Auth()->id())->limit(3)->get();
+        
+        // for follow suggestion
+        $filter=array();
+        foreach ($users as $user) {
+            $followquery=follower::where([
+                ['follower_id',Auth()->id()],
+                ['user_id',$user->id]
+                 ])->get();
+                    if (empty($followquery->count()) && count($filter)<3) {
+                             $filter[]= $user;
+                           
+                    }
+                 
+        }
+    //    $user=$users;
+                
+                    // return $filter_list;
+
+       return view('mainpage.home', ['page_title' => 'Pictogram - Home','posts'=>$listpost,'users'=>$filter]);
+
+    }
+    public function admindashboard($id)
+    {
+        
         $posts = DB::table('posts')
         ->select('posts.id as postid','posts.*','users.id','users.first_name','users.last_name','users.profile_pic','users.username')
         ->join('users','users.id','=','posts.user_id')->orderBy('posts.id','desc')

@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\chat;
 use App\Models\User;
-use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChattingController extends Controller
 {
@@ -93,14 +93,14 @@ class ChattingController extends Controller
             ], 500);
         }
     }
-    public function getchats() {
+    public function getchats(Request $req) {
 
         try {
                 $chats= $this->getAllMessages();
                 $chatlist  = "";
                 foreach ($chats as  $chat) {
                     $ch_user = $this->getuser($chat['user_id']);
-                    $chatlist.='<div class="d-flex align-items-center chat-item" data-bs-toggle="modal" data-bs-target="#chatting">
+                    $chatlist.='<div class="d-flex align-items-center chat-item chatlist_item" data-bs-toggle="modal" data-bs-target="#chatting" onclick="popchat('.$chat['user_id'].')">
             <img src="/storage/'.$ch_user['profile_pic'].' " alt="User" class="chat-dp">
             <div class="chat-details ms-3">
                 <div class="d-flex justify-content-between">
@@ -111,7 +111,45 @@ class ChattingController extends Controller
             </div>
         </div>'; 
     }
-    return response()->json($chatlist);
+    $json['chatlist']=$chatlist;
+    $user=$req->json('chatter_id');
+    if (isset($user) && $user!=0) {
+           $messages = $this->getMessages($user);
+           $chatmsg="";
+           foreach($messages as $cm){
+            if ($cm['from_user_id']==Auth::id()) {
+               $cl1=' align-self-end bg-primary text-light';
+               $cl2=' text-light';
+            }
+            else{
+                $cl1='';
+                $cl2=' text-muted';
+            }
+        //    $chatmsg.='<div class="chat-box">
+        //     <div class="chat-box-body">
+        //       <div class="chat-box-body-content gap-3 d-flex flex-column">
+        //         <div class="chat-box-message p-2 rounded shadow-sm col-8 d-inline-block '.$cl1.'">
+        //           <div class="chat-box-message-content">
+        //             <p>'.$cm['msg'].'</p>
+        //             <span class="'.$cl2.'" style="font-size: small">'.getTimeAgo($cm['created_at']).'</span>
+        //           </div>
+        //         </div>
+        //       </div>';
+           $chatmsg.='<div class="chat-box-message p-2 rounded shadow-sm col-8 d-inline-block '.$cl1.'">
+                  <div class="chat-box-message-content">
+                    <p>'.$cm['msg'].'</p>
+                    <span class="'.$cl2.'" style="font-size: small">'.getTimeAgo($cm['created_at']).'</span>
+                  </div>
+                </div>';
+            }
+            $json['chat']['msgs']=$chatmsg;
+            $json['chat']['userdata']=$this->getuser($user);
+}
+else{
+    $json['chat']['msgs']='<div class="spinner-grow text-danger" role="status">
+</div>';
+}
+    return response()->json($json);
            
         } catch (\Exception $e) {
             return response()->json([
@@ -119,6 +157,22 @@ class ChattingController extends Controller
                 'message' => 'Server error: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function sendMessage(Request $req){
+                $current_user_id = Auth::id();
+                $user_id = $req->input('user_id');  // Use input() instead of json()
+                $msg = $req->input('msg');
+                $query= chat::create([
+                    'from_user_id' => $current_user_id,
+                    'to_user_id' => $user_id,
+                    'msg' => $msg
+                ]);
+                if ($query) {
+                    return response()->json(['success' => true, 'message' => 'Message sent successfully']);
+                } else {
+                    return response()->json(['success' => false, 'message' => 'Failed to send message'], 500);
+                }
     }
 
     

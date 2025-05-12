@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\adminController;
 use App\Http\Controllers\ChattingController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\serachController;
 use App\Http\Middleware\UserStatus;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmailController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -28,14 +30,20 @@ Route::group(['middleware'=>'guest'],function(){
     Route::any('/login',[Controller::class,'login'])->name('login');
     Route::any('/checkemail',[Controller::class,'checkemail'])->name('checkemail');
     Route::any('/resetpass',[Controller::class,'resetpass']);
+    Route::any('/admin',[adminController::class,'adminlogin']);
     Route::any('/',[Controller::class,'login'])->name('login');
+    Route::any('/adminhome',[adminController::class,'table'])->name('table');
+    Route::any('/block/{id}',[adminController::class,'blockuser']);
+    // Route::any('/loginuser/{id}', [adminController::class,'userpage']);
 });
 
-Route::group(['middleware'=>'auth'],function(){
+Route::group(['middleware'=>'auth','admin'],function(){
+    // Route::get('/loginuser/{id}', [adminController::class, 'userpage']);
+    Route::get('/loginuser/{id}', [adminController::class, 'admindashboard']);
     Route::any('/block',[Controller::class,'block'])->name('block');
-    // Route::get('/sendmail',[EmailController::class,'sendEmail'])->name('/sendmail');
+    Route::get('/searchuser/{search}',[serachController::class,'search']);
     Route::any('/verify',[Controller::class,'verify'])->name('verify');
-    Route::any('/home', [Controller::class,'dashboard'])->middleware(UserStatus::class);
+    Route::any('/home', [Controller::class,'dashboard']);
     Route::any('/editprofile',[Controller::class,'editprofile'])->name('edit_profile')->middleware(UserStatus::class);
     Route::any('/add_posts',[Controller::class,'addposts'])->name('add_posts')->middleware(UserStatus::class);
     // Route::any('/home?editprofile', [Controller::class,'dashboard']);
@@ -48,6 +56,7 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('/closenotify',[NotificationController::class,'closenotification']);
     Route::any('/addcomment/{comment}/pid/{pid}',[Controller::class,'addcomment']);
     Route::any('/checkmessage',[ChattingController::class,'getchats']);
+    Route::any('/sendmessage',[ChattingController::class,'sendMessage']);
     // Route::any('/checkmessage2/{id}',[ChattingController::class,'getMessages']);
     Route::any('/logout', [Controller::class,'logout']);
 });

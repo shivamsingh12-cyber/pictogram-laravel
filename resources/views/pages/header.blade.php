@@ -55,6 +55,27 @@
             font-size: 0.8rem;
             color: #888;
         }
+
+        #searchresult ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#searchresult li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+#searchresult li:last-child {
+    border-bottom: none;
+}
+
+#searchresult li:hover {
+    background-color: #f8f9fa;
+}
+
     </style>
 </head>
 
